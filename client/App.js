@@ -44,25 +44,24 @@ export default function App() {
 
   return (
     <View style={styles.container}>
-      <MapView
-        style={styles.map}
-        region={{
-          latitude: location ? location.coords.latitude : 37.78825,
-          longitude: location ? location.coords.longitude : -122.4324,
-          latitudeDelta: 0.0922,
-          longitudeDelta: 0.0421,
-        }}
-        onPress={async () => {
-          const { status } = await Location.getForegroundPermissionsAsync();
-          if (status !== 'granted') {
-            requestLocationPermissions();
-            console.log("asd2")
-          }else{
-            console.log("sad")
-          }
-        }}
-        showsUserLocation={true}
-      />
+      <View style={styles.containermap}>
+        <MapView
+          style={styles.map}
+          region={{
+            latitude: location ? location.coords.latitude : -33.4489,
+            longitude: location ? location.coords.longitude : -70.6693,
+            latitudeDelta: 0.0922,
+            longitudeDelta: 0.0421
+          }}
+          onPress={async () => {
+            const { status } = await Location.getForegroundPermissionsAsync();
+            if (status !== 'granted') {
+              requestLocationPermissions();
+            }
+          }}
+          showsUserLocation={true}
+        />
+      </View>
       <Text>XD</Text>
       <StatusBar style="auto" />
     </View>
@@ -77,8 +76,14 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   map: {
-    width: '50%',
-    height: '50%',
+    width: '100%',
+    height: '100%',
+  },
+  containermap: {
+    width: 200,
+    height: 200,
+    borderRadius: 91,
+    overflow: 'hidden',
   },
 });
 
