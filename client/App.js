@@ -9,8 +9,9 @@ export default function App() {
   const [errorMsg, setErrorMsg] = useState(null);
   const [userLocation, setUserLocation] = useState(null);
 
-  function handlePress(asd, asd2)  {
-      setUserLocation({asd,asd2})
+  function handlePress(latitude, longitude)  {
+      setUserLocation({latitude,longitude})
+      console.log(userLocation)
   };
   useEffect(() => {
     requestLocationPermissions();
@@ -53,6 +54,8 @@ export default function App() {
   return (
     <View style={styles.container}>
       <View style={styles.containermap}>
+      {location && (
+
         <MapView
           style={styles.map}
           region={{
@@ -69,20 +72,22 @@ export default function App() {
           }}
           showsUserLocation={true}
         >
-
-          <Circle
-            center={{latitude:-33.5817928,longitude:-70.6448737}}
-            radius={100}
-            strokeWidth={2}
-            strokeColor="red"
-            fillColor="green"
-          />
+          {userLocation &&(
+            <Circle
+              center={{latitude: userLocation.latitude, longitude: userLocation.longitude}}
+              radius={500}
+              strokeWidth={2}
+              strokeColor="red"
+              fillColor="rgba(0,128,0,0.5)"
+            />
+          )}
         </MapView>
+      )}
+
       </View>
       <Button title="Marcar ubicación" onPress={()=>{
         handlePress(location.coords.latitude,location.coords.longitude)
         console.log(userLocation)
-        console.log(location.coords.latitude)
       }
         } label="xd"/>
         <StatusBar style="auto" />
