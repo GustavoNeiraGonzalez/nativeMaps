@@ -1,16 +1,21 @@
 import React, { useEffect, useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
-import MapView from 'react-native-maps';
+import { StyleSheet, Text, View, Button } from 'react-native';
+import MapView, {Circle} from 'react-native-maps';
 import * as Location from 'expo-location';
 
 export default function App() {
   const [location, setLocation] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
+  const [userLocation, setUserLocation] = useState(null);
 
+  function handlePress(asd, asd2)  {
+      setUserLocation({asd,asd2})
+  };
   useEffect(() => {
     requestLocationPermissions();
   }, []);
+  
 
   async function requestLocationPermissions() {
     let { status } = await Location.requestForegroundPermissionsAsync();
@@ -33,6 +38,9 @@ export default function App() {
         setLocation(newLocation);
       }
     );
+    {console.log(location.coords.latitude)}
+    {console.log(location.coords.longitude)}
+
   }
 
   let text = 'Waiting..';
@@ -60,10 +68,24 @@ export default function App() {
             }
           }}
           showsUserLocation={true}
-        />
+        >
+
+          <Circle
+            center={{latitude:-33.5817928,longitude:-70.6448737}}
+            radius={100}
+            strokeWidth={2}
+            strokeColor="red"
+            fillColor="green"
+          />
+        </MapView>
       </View>
-      <Text>XD</Text>
-      <StatusBar style="auto" />
+      <Button title="Marcar ubicación" onPress={()=>{
+        handlePress(location.coords.latitude,location.coords.longitude)
+        console.log(userLocation)
+        console.log(location.coords.latitude)
+      }
+        } label="xd"/>
+        <StatusBar style="auto" />
     </View>
   );
 };
@@ -74,6 +96,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
+    backgroundColor:'#292929',
+    color:'wheat',
   },
   map: {
     width: '100%',
