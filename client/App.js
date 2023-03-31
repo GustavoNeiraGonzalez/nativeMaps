@@ -5,6 +5,12 @@ import MapView, {Circle} from 'react-native-maps';
 import * as Location from 'expo-location';
 
 export default function App() {
+  const example = [
+    { "latitude": -33.57151952569935, "longitude": -70.66198445856571 },
+    { "latitude": -33.59522924065171, "longitude": -70.67142482846975 },
+    { "latitude": -33.604710911424135, "longitude": -70.6145080178976 },
+    { "latitude": -33.57073091478793, "longitude": -70.60186006128788 }
+  ];
   const [location, setLocation] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
   const [userLocation, setUserLocation] = useState(null);
@@ -72,15 +78,16 @@ export default function App() {
           }}
           showsUserLocation={true}
         >
-          {userLocation &&(
+          {example.map((example, index) => (
             <Circle
-              center={{latitude: userLocation.latitude, longitude: userLocation.longitude}}
+              key={index}
+              center={{latitude: example.latitude, longitude: example.longitude}}
               radius={500}
               strokeWidth={2}
               strokeColor="red"
               fillColor="rgba(0,128,0,0.5)"
             />
-          )}
+          ))}
         </MapView>
       ) : errorMsg ? (
         <View style={styles.errorContainer}>
