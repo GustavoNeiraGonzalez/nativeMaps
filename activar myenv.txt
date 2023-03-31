@@ -1,0 +1,3 @@
+C:\Users\Usuario\Desktop\Portafolio\proyectoApp\myenv\Scripts\activate.bat
+
+-con "deactivate" desactivas myenv 

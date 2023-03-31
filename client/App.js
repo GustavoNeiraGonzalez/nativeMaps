@@ -11,7 +11,6 @@ export default function App() {
 
   function handlePress(latitude, longitude)  {
       setUserLocation({latitude,longitude})
-      console.log(userLocation)
   };
   useEffect(() => {
     requestLocationPermissions();
@@ -39,8 +38,6 @@ export default function App() {
         setLocation(newLocation);
       }
     );
-    {console.log(location.coords.latitude)}
-    {console.log(location.coords.longitude)}
 
   }
 
@@ -54,20 +51,23 @@ export default function App() {
   return (
     <View style={styles.container}>
       <View style={styles.containermap}>
-      {location && (
-
+      {location ? (
         <MapView
           style={styles.map}
           region={{
-            latitude: location ? location.coords.latitude : -33.4489,
-            longitude: location ? location.coords.longitude : -70.6693,
+            latitude: location.coords.latitude,
+            longitude: location.coords.longitude,
             latitudeDelta: 0.0922,
             longitudeDelta: 0.0421
           }}
-          onPress={async () => {
+          onPress={async (event) => {
+            event.persist();
             const { status } = await Location.getForegroundPermissionsAsync();
             if (status !== 'granted') {
               requestLocationPermissions();
+            }else{
+              const { latitude, longitude } = event.nativeEvent.coordinate;
+              console.log({ latitude, longitude })
             }
           }}
           showsUserLocation={true}
@@ -82,8 +82,15 @@ export default function App() {
             />
           )}
         </MapView>
+      ) : errorMsg ? (
+        <View style={styles.errorContainer}>
+          <Text>{errorMsg}</Text>
+        </View>
+      ) : (
+        <View style={styles.loadingContainer}>
+          <Text>Cargando ubicación...</Text>
+        </View>
       )}
-
       </View>
       <Button title="Marcar ubicación" onPress={()=>{
         handlePress(location.coords.latitude,location.coords.longitude)
@@ -107,6 +114,7 @@ const styles = StyleSheet.create({
   map: {
     width: '100%',
     height: '100%',
+    textAlign:'center',
   },
   containermap: {
     width: 200,
