@@ -131,10 +131,8 @@ export default function App() {
    
 
   
-  
   if (location && location.coords) {
     const groupedCoordinates = groupCoordinates(example, 2000, location.coords);
-    console.log(groupedCoordinates);
   }
     
   return (
@@ -161,11 +159,11 @@ export default function App() {
           }}
           showsUserLocation={true}
         >
-         {circles.map((circle, index) => (
+         { groupCoordinates(example, 2000, location.coords).map((circle, index) => (
           <Circle
             key={index}
             center={{latitude: circle.latitude, longitude: circle.longitude}}
-            radius={circle.radius}
+            radius={circle.radio}
             strokeWidth={2}
             strokeColor="red"
             fillColor="rgba(0,128,0,0.5)"
