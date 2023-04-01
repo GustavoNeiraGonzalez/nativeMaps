@@ -3,13 +3,15 @@ import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, Button } from 'react-native';
 import MapView, {Circle} from 'react-native-maps';
 import * as Location from 'expo-location';
+import haversine from 'haversine';
 
 export default function App() {
   const example = [
     { "latitude": -33.57151952569935, "longitude": -70.66198445856571 },
     { "latitude": -33.59522924065171, "longitude": -70.67142482846975 },
     { "latitude": -33.604710911424135, "longitude": -70.6145080178976 },
-    { "latitude": -33.57073091478793, "longitude": -70.60186006128788 }
+    { "latitude": -33.57073091478793, "longitude": -70.60186006128788 },
+    {"latitude": -33.58280176716889, "longitude": -70.6472809240222}
   ];
   const [location, setLocation] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
@@ -54,6 +56,23 @@ export default function App() {
     text = JSON.stringify(location);
   }
 
+  const filteredExamples = example.filter((example) => {
+    if (location && location.coords) {
+    
+    const start = {
+      latitude: example.latitude,
+      longitude: example.longitude,
+    };
+    const end = {
+      latitude: location.coords.latitude,
+      longitude: location.coords.longitude,
+    };
+    const distanceInMeters = haversine(start, end, {unit: 'meter'});
+    return distanceInMeters <= 2000;
+  }
+  });
+
+
   return (
     <View style={styles.container}>
       <View style={styles.containermap}>
@@ -78,16 +97,18 @@ export default function App() {
           }}
           showsUserLocation={true}
         >
-          {example.map((example, index) => (
+          {location.coords &&(
+          filteredExamples.map((example, index) => (
             <Circle
               key={index}
               center={{latitude: example.latitude, longitude: example.longitude}}
-              radius={500}
+              radius={150}
               strokeWidth={2}
               strokeColor="red"
               fillColor="rgba(0,128,0,0.5)"
             />
-          ))}
+          ))
+          )}
         </MapView>
       ) : errorMsg ? (
         <View style={styles.errorContainer}>
