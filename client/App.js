@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, Button } from 'react-native';
-import MapView, {Circle} from 'react-native-maps';
+import MapView, {Circle,Marker} from 'react-native-maps';
 import * as Location from 'expo-location';
 import haversine from 'haversine';
+import { v4 as uuidv4 } from 'uuid';
 
 export default function App() {
   let timerId;
@@ -13,10 +14,9 @@ export default function App() {
     { "latitude": -33.59522924065171, "longitude": -70.67142482846975 },
     { "latitude": -33.604710911424135, "longitude": -70.6145080178976 },
     { "latitude": -33.57073091478793, "longitude": -70.60186006128788 },
-    {"latitude": -33.58280176716889, "longitude": -70.6472809240222},
    
     {"latitude": -33.580926151345786, "longitude": -70.64625162631273},
-    {"latitude": -33.57931501648034, "longitude": -70.64303398132324}
+    {"latitude": -33.58116050080819, "longitude": -70.64616646617651}
   ];
   const [location, setLocation] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
@@ -49,6 +49,7 @@ export default function App() {
       },
       (newLocation) => {
         setLocation(newLocation);
+        
       }
     );
 
@@ -105,7 +106,7 @@ export default function App() {
               longitude: groups[j][k].longitude,
             };
             const distanceInMeters = haversine(start, end, {unit: 'meter'});
-            if (distanceInMeters <= 10) {
+            if (distanceInMeters <= 28) {
               groups[j].push(coordinates[i]);
               grouped = true;
               break;
@@ -160,15 +161,17 @@ export default function App() {
           showsUserLocation={true}
         >
          { groupCoordinates(example, 2000, location.coords).map((circle, index) => (
-          <Circle
-            key={index}
-            center={{latitude: circle.latitude, longitude: circle.longitude}}
-            radius={circle.radio}
-            strokeWidth={2}
-            strokeColor="red"
-            fillColor="rgba(0,128,0,0.5)"
-          />
-        ))}
+  <React.Fragment key={index}>
+       <Circle
+             center={{ latitude: circle.latitude, longitude: circle.longitude }}
+             radius={circle.radio}
+             strokeWidth={2}
+             strokeColor="red"
+             fillColor="rgba(0,128,0,0.5)" />
+            <Marker coordinate={{latitude: circle.latitude, longitude: circle.longitude}} 
+            title={circle.fusion ? `Fusión: ${circle.fusion}` : 'Fusión: 1'} />
+             
+             </React.Fragment>))}
           
         </MapView>
       ) : errorMsg ? (
@@ -181,10 +184,12 @@ export default function App() {
         </View>
       )}
       </View>
+      {location &&(
       <Button title="Marcar ubicación" onPress={()=>{
         handlePress(location.coords.latitude,location.coords.longitude)
       }
         } label="xd"/>
+        )}
         <StatusBar style="auto" />
     </View>
   );
@@ -205,9 +210,9 @@ const styles = StyleSheet.create({
     textAlign:'center',
   },
   containermap: {
-    width: 200,
-    height: 200,
-    borderRadius: 91,
+    width: 250,
+    height: 250,
+    borderRadius: 20,
     overflow: 'hidden',
   },
 });
