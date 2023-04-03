@@ -4,19 +4,17 @@ import { StyleSheet, Text, View, Button } from 'react-native';
 import MapView, {Circle,Marker} from 'react-native-maps';
 import * as Location from 'expo-location';
 import haversine from 'haversine';
-import { v4 as uuidv4 } from 'uuid';
 
 export default function App() {
-  let timerId;
 
   const example = [
-    { "latitude": -33.57151952569935, "longitude": -70.66198445856571 },
-    { "latitude": -33.59522924065171, "longitude": -70.67142482846975 },
-    { "latitude": -33.604710911424135, "longitude": -70.6145080178976 },
-    { "latitude": -33.57073091478793, "longitude": -70.60186006128788 },
-   
-    {"latitude": -33.580926151345786, "longitude": -70.64625162631273},
-    {"latitude": -33.58116050080819, "longitude": -70.64616646617651}
+    { "latitude": -33.57151952569935, "longitude": -70.66198445856571, "fecha": "12:30 01/02 2023", "delito": "hurto" },
+    { "latitude": -33.59522924065171, "longitude": -70.67142482846975, "fecha": "13:45 02/01 2023", "delito": "asalto" },
+    { "latitude": -33.604710911424135, "longitude": -70.6145080178976, "fecha": "14:00 03/02 2023", "delito": "hurto" },
+    { "latitude": -33.57073091478793, "longitude": -70.60186006128788, "fecha": "15:15 04/01 2023", "delito": "asalto" },
+    {"latitude": -33.580926151345786, "longitude": -70.64625162631273, "fecha": "16:30 05/02 2023", "delito": "hurto"},
+    {"latitude": -33.58116050080819, "longitude": -70.64616646617651, "fecha": "17:45 06/03 2023", "delito": "asalto"},
+    {"latitude": -33.58359725059294, "longitude": -70.64564276486635, "fecha": "14:00 03/03 2023", "delito": "hurto" }
   ];
   const [location, setLocation] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
@@ -43,15 +41,16 @@ export default function App() {
 
     Location.watchPositionAsync(
       {
-        accuracy: Location.Accuracy.BestForNavigation,
-        timeInterval: 1000,
-        distanceInterval: 1,
+        accuracy: Location.Accuracy.Highest,
+        timeInterval: 8000,
+        distanceInterval: 2,
       },
       (newLocation) => {
         setLocation(newLocation);
         
       }
     );
+    console.log('XD')
 
   }
 
@@ -80,7 +79,7 @@ export default function App() {
     return distanceInMeters <= 2000;
   }
   });
-
+  //aqui se calcula las coordenadas en x metros del usuario, las filtra y las junta las cercanas----------
   const groupCoordinates = (coordinates, maxDistance, userLocation) => {
     const groups = [];
     for (let i = 0; i < coordinates.length; i++) {
@@ -126,6 +125,14 @@ export default function App() {
       const radio = 90 + (group.length - 1) * 10;
       const result = {latitude: midLatitude, longitude: midLongitude, radio};
       if (group.length > 1) result.fusion = group.length;
+
+       // Agregar arrays de fechas y delitos al nuevo objeto
+      result.fecha = [];
+      result.delito = [];
+      group.forEach(coord => {
+          result.fecha.push(coord.fecha);
+          result.delito.push(coord.delito);
+      });
       return result;
     });
   }
@@ -135,7 +142,14 @@ export default function App() {
   if (location && location.coords) {
     const groupedCoordinates = groupCoordinates(example, 2000, location.coords);
   }
-    
+  const formatDatesAndCrimes = (dates, crimes) => {
+    let result = '';
+    for (let i = 0; i < dates.length; i++) {
+        result += `Fecha: ${dates[i]} - Delito: ${crimes[i]}\n`;
+    }
+    return result;
+}
+
   return (
     <View style={styles.container}>
       <View style={styles.containermap}>
@@ -160,27 +174,30 @@ export default function App() {
           }}
           showsUserLocation={true}
         >
-         { groupCoordinates(example, 2000, location.coords).map((circle, index) => (
-  <React.Fragment key={index}>
-       <Circle
-             center={{ latitude: circle.latitude, longitude: circle.longitude }}
-             radius={circle.radio}
-             strokeWidth={2}
-             strokeColor="red"
-             fillColor="rgba(0,128,0,0.5)" />
-            <Marker coordinate={{latitude: circle.latitude, longitude: circle.longitude}} 
-            title={circle.fusion ? `Fusión: ${circle.fusion}` : 'Fusión: 1'} />
+        {groupCoordinates(example, 2000, location.coords).map((circle, index) => (
+          <React.Fragment key={index}>
+            <Circle
+              center={{ latitude: circle.latitude, longitude: circle.longitude }}
+              radius={circle.radio}
+              strokeWidth={2}
+              strokeColor="red"
+              fillColor="rgba(0,128,0,0.5)" />
+          <Marker coordinate={{latitude: circle.latitude, longitude: circle.longitude}} 
+            title={circle.fusion ? `Cantidad: ${circle.fusion}` : `Cantidad: 1 Fecha: ${circle.fecha}`} 
+            description={circle.fusion ? `${formatDatesAndCrimes(circle.fecha, circle.delito)}`
+            : `Delito: ${circle.delito[0]}`}/>
+              
              
-             </React.Fragment>))}
+          </React.Fragment>))}
           
         </MapView>
       ) : errorMsg ? (
         <View style={styles.errorContainer}>
-          <Text>{errorMsg}</Text>
+          <Text style={styles.errorContainer}>{errorMsg}</Text>
         </View>
       ) : (
         <View style={styles.loadingContainer}>
-          <Text>Cargando ubicación...</Text>
+          <Text style={styles.loadingContainer}>Cargando ubicación...</Text>
         </View>
       )}
       </View>
@@ -210,10 +227,50 @@ const styles = StyleSheet.create({
     textAlign:'center',
   },
   containermap: {
-    width: 250,
-    height: 250,
+    width: 400,
+    height: 400,
     borderRadius: 20,
     overflow: 'hidden',
   },
+  errorContainer:{
+    color:'wheat',
+    textAlignVertical:'center',
+  },
+  loadingContainer:{
+    color:'wheat',
+    textAlign:'center',
+  },
+  container2: {
+    flexDirection: 'column',
+    alignSelf: 'flex-start',
+},
+marker: {
+    width: 140,
+    height: 40,
+    borderRadius: 4,
+    flexDirection: 'column',
+    justifyContent: 'center',
+    backgroundColor: 'white',
+    padding: 5,
+},
+title2: {
+    fontSize: 12,
+    textAlign: 'center',
+},
+triangle: {
+    width: 0,
+    height: 0,
+    backgroundColor: 'transparent',
+    borderStyle: 'solid',
+    borderLeftWidth: 6,
+    borderRightWidth: 6,
+    borderBottomWidth: 12,
+    borderLeftColor: 'transparent',
+    borderRightColor: 'transparent',
+    borderBottomColor: 'white',
+    transform: [
+        {rotate: '180deg'}
+      ]
+}
 });
 
