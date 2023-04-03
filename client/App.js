@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, Button } from 'react-native';
-import MapView, {Circle,Marker} from 'react-native-maps';
+import MapView, {Circle,Marker,Callout} from 'react-native-maps';
 import * as Location from 'expo-location';
 import haversine from 'haversine';
 
@@ -12,9 +12,13 @@ export default function App() {
     { "latitude": -33.59522924065171, "longitude": -70.67142482846975, "fecha": "13:45 02/01 2023", "delito": "asalto" },
     { "latitude": -33.604710911424135, "longitude": -70.6145080178976, "fecha": "14:00 03/02 2023", "delito": "hurto" },
     { "latitude": -33.57073091478793, "longitude": -70.60186006128788, "fecha": "15:15 04/01 2023", "delito": "asalto" },
-    {"latitude": -33.580926151345786, "longitude": -70.64625162631273, "fecha": "16:30 05/02 2023", "delito": "hurto"},
-    {"latitude": -33.58116050080819, "longitude": -70.64616646617651, "fecha": "17:45 06/03 2023", "delito": "asalto"},
-    {"latitude": -33.58359725059294, "longitude": -70.64564276486635, "fecha": "14:00 03/03 2023", "delito": "hurto" }
+    { "latitude": -33.580926151345786, "longitude": -70.64625162631273, "fecha": "16:30 05/02 2023", "delito": "hurto"},
+    { "latitude": -33.580926151345786, "longitude": -70.64625162631273, "fecha": "16:30 05/02 2023", "delito": "hurto"},
+
+    { "latitude": -33.580926151345786, "longitude": -70.64625162631273, "fecha": "16:30 05/02 2023", "delito": "hurto"},
+
+    { "latitude": -33.58116050080819, "longitude": -70.64616646617651, "fecha": "17:45 06/03 2023", "delito": "asalto"},
+    { "latitude": -33.58359725059294, "longitude": -70.64564276486635, "fecha": "14:00 03/03 2023", "delito": "hurto" }
   ];
   const [location, setLocation] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
@@ -182,12 +186,15 @@ export default function App() {
               strokeWidth={2}
               strokeColor="red"
               fillColor="rgba(0,128,0,0.5)" />
-          <Marker coordinate={{latitude: circle.latitude, longitude: circle.longitude}} 
-            title={circle.fusion ? `Cantidad: ${circle.fusion}` : `Cantidad: 1 Fecha: ${circle.fecha}`} 
-            description={circle.fusion ? `${formatDatesAndCrimes(circle.fecha, circle.delito)}`
-            : `Delito: ${circle.delito[0]}`}/>
-              
-             
+          <Marker coordinate={{latitude: circle.latitude, longitude: circle.longitude}}>
+            <Callout>
+                <View style={styles.callout}>
+                    <Text style={styles.title}>{circle.fusion ? `Cantidad: ${circle.fusion}`  : 'Cantidad: 1'}</Text>
+                    <Text style={styles.description}>{circle.fusion ? `${formatDatesAndCrimes(circle.fecha, circle.delito)}`
+                    :  `fecha: ${circle.fecha}\n Delitos: ${circle.delito}`}</Text>
+                  </View>
+              </Callout>
+          </Marker>
           </React.Fragment>))}
           
         </MapView>
@@ -239,6 +246,17 @@ const styles = StyleSheet.create({
   loadingContainer:{
     color:'wheat',
     textAlign:'center',
+  },
+  callout: {
+    padding: 5,
+  },
+  title: {
+    fontSize: 12,
+    textAlign: 'center',
+  },
+  description: {
+    fontSize: 10,
+    textAlign: 'center',
   },
 
 });
