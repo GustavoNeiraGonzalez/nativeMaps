@@ -240,37 +240,6 @@ const styles = StyleSheet.create({
     color:'wheat',
     textAlign:'center',
   },
-  container2: {
-    flexDirection: 'column',
-    alignSelf: 'flex-start',
-},
-marker: {
-    width: 140,
-    height: 40,
-    borderRadius: 4,
-    flexDirection: 'column',
-    justifyContent: 'center',
-    backgroundColor: 'white',
-    padding: 5,
-},
-title2: {
-    fontSize: 12,
-    textAlign: 'center',
-},
-triangle: {
-    width: 0,
-    height: 0,
-    backgroundColor: 'transparent',
-    borderStyle: 'solid',
-    borderLeftWidth: 6,
-    borderRightWidth: 6,
-    borderBottomWidth: 12,
-    borderLeftColor: 'transparent',
-    borderRightColor: 'transparent',
-    borderBottomColor: 'white',
-    transform: [
-        {rotate: '180deg'}
-      ]
-}
+
 });
 
