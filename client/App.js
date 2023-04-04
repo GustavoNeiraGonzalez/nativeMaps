@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from 'react';
+import { Picker } from '@react-native-picker/picker';
+
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, Button } from 'react-native';
 import MapView, {Circle,Marker,Callout} from 'react-native-maps';
@@ -6,6 +8,10 @@ import * as Location from 'expo-location';
 import haversine from 'haversine';
 
 export default function App() {
+
+  const currentYear = new Date().getFullYear();
+  const years = Array.from({length: currentYear - 2000 + 1}, (v, i) => 2000 + i);
+  const [selectedYear, setSelectedYear] = useState(currentYear);
 
   const example = [
     { "latitude": -33.59522924065171, "longitude": -70.67142482846975, "fecha": "13:45 02/01 2023", "delito": "asalto" },
@@ -186,7 +192,6 @@ dateLimit.setHours(0); // Establecer la hora en 0 para obtener la primera hora d
 dateLimit.setMinutes(0); // Establecer los minutos en 0
 dateLimit.setSeconds(0); // Establecer los segundos en 0
 dateLimit.setMilliseconds(0); // Establecer los milisegundos en 0
-console.log(dateLimit)
   return (
     <View style={styles.container}>
       <View style={styles.containermap}>
@@ -248,6 +253,48 @@ console.log(dateLimit)
         } label="xd"/>
         )}
         <StatusBar style="auto" />
+      <View style={styles.selectorView}>
+        <View styles={styles.selectorColumn}>
+          <Text style={styles.selectortext}>Elegir Año:</Text>
+          <Picker style={styles.selectorPick}
+            selectedValue={selectedYear}
+            onValueChange={(itemValue) => {
+              setSelectedYear(itemValue)}}
+          >
+            {years.map((year) => (
+              <Picker.Item key={year} label={year.toString()} value={year} />
+            ))}
+          </Picker>
+        </View>
+        <View styles={styles.selectorColumn}>
+          <Text style={styles.selectortext}>Elegir Mes:</Text>
+            <Picker style={styles.selectorPick}
+              selectedValue={selectedYear}
+              onValueChange={(itemValue) => {
+                setSelectedYear(itemValue)}}
+            >
+              {years.map((year) => (
+                <Picker.Item key={year} label={year.toString()} value={year} />
+              ))}
+            </Picker>
+        </View>
+        <View styles={styles.selectorColumn}>
+          <Text style={styles.selectortext}>Elegir Hora:</Text>
+            <Picker style={styles.selectorPick}
+              selectedValue={selectedYear}
+              onValueChange={(itemValue) => {
+                setSelectedYear(itemValue)}}
+            >
+              {years.map((year) => (
+                <Picker.Item key={year} label={year.toString()} value={year} />
+              ))}
+            </Picker>
+        </View>
+       
+      </View>
+      <View style={styles.selectorButton}>
+        <Button title="Filtrar" onPress={() => {}} />
+      </View>
     </View>
   );
 };
@@ -291,6 +338,26 @@ const styles = StyleSheet.create({
     fontSize: 10,
     textAlign: 'center',
   },
-
+  selectortext:{
+    color: 'wheat',
+  },
+  selectorPick:{
+    height: 50, 
+    width: 150,
+    color:'wheat'
+  },
+  selectorView:{
+    maxWidth: '90%', 
+    flexDirection: 'row', 
+    justifyContent: 'space-between', 
+    alignItems: 'center'
+  },
+  selectorButton:{
+    alignItems: 'center'
+  },
+  selectorColumn:{
+    flexDirection: 'column',
+    alignItems:'center'
+  }
 });
 
