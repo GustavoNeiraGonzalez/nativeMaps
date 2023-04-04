@@ -8,7 +8,6 @@ import haversine from 'haversine';
 export default function App() {
 
   const example = [
-    { "latitude": -33.57151952569935, "longitude": -70.66198445856571, "fecha": "12:30 01/02 2023", "delito": "hurto" },
     { "latitude": -33.59522924065171, "longitude": -70.67142482846975, "fecha": "13:45 02/01 2023", "delito": "asalto" },
     { "latitude": -33.604710911424135, "longitude": -70.6145080178976, "fecha": "14:00 03/02 2023", "delito": "hurto" },
     { "latitude": -33.57073091478793, "longitude": -70.60186006128788, "fecha": "15:15 04/01 2023", "delito": "asalto" },
@@ -85,10 +84,22 @@ export default function App() {
   });
 
   //aqui se calcula las coordenadas en x metros del usuario, las filtra y las junta las cercanas----------
-  const groupCoordinates = (coordinates, maxDistance, userLocation, filterDistance, filterDelito) => {
+  const groupCoordinates = (coordinates, maxDistance, userLocation,
+                           filterDistance, filterDelito, filterDate) => {
     const groups = [];
     for (let i = 0; i < coordinates.length; i++) {
-      // Calcular la distancia entre la coordenada y la ubicación del usuario
+       // Convertir la fecha de la coordenada a un objeto Date
+       const coordDate = new Date(coordinates[i].fecha.split(' ')[2] + '-' 
+       + coordinates[i].fecha.split(' ')[1].split('/')[1] + '-' + 
+       coordinates[i].fecha.split(' ')[1].split('/')[0] + 'T' + 
+       coordinates[i].fecha.split(' ')[0] + ':00Z');
+      // Obtener la fecha límite, si no hay fecha limite entonces es la fecha actual menos 1 año
+      const dateLimit = filterDate ? filterDate : new Date(new Date().setFullYear(new Date().getFullYear() - 1));
+      // Verificar si la fecha de la coordenada es posterior a la fecha límite
+
+      
+      if (coordDate < dateLimit) continue;
+        // Calcular la distancia entre la coordenada y la ubicación del usuario
       const start = {
         latitude: coordinates[i].latitude,
         longitude: coordinates[i].longitude,
@@ -165,8 +176,17 @@ export default function App() {
         result += `Fecha: ${dates[i]} - Delito: ${crimes[i]}\n`;
     }
     return result;
+   
 }
-
+const dateLimit = new Date();
+dateLimit.setFullYear(2023); // Establecer el año en 2023
+dateLimit.setMonth(2); // Marzo es el mes 2 (Enero es 0)
+dateLimit.setDate(3); // Establecer el día en 2 para obtener el segundo día del mes
+dateLimit.setHours(0); // Establecer la hora en 0 para obtener la primera hora del día
+dateLimit.setMinutes(0); // Establecer los minutos en 0
+dateLimit.setSeconds(0); // Establecer los segundos en 0
+dateLimit.setMilliseconds(0); // Establecer los milisegundos en 0
+console.log(dateLimit)
   return (
     <View style={styles.container}>
       <View style={styles.containermap}>
@@ -191,7 +211,7 @@ export default function App() {
           }}
           showsUserLocation={true}
         >
-        {groupCoordinates(example, 2000, location.coords).map((circle, index) => (
+        {groupCoordinates(example, 2000, location.coords, null, null, dateLimit).map((circle, index) => (
           <React.Fragment key={index}>
             <Circle
               center={{ latitude: circle.latitude, longitude: circle.longitude }}
