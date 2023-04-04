@@ -83,10 +83,12 @@ export default function App() {
     return distanceInMeters <= 2000;
   }
   });
+
   //aqui se calcula las coordenadas en x metros del usuario, las filtra y las junta las cercanas----------
-  const groupCoordinates = (coordinates, maxDistance, userLocation) => {
+  const groupCoordinates = (coordinates, maxDistance, userLocation, filterDistance, filterDelito) => {
     const groups = [];
     for (let i = 0; i < coordinates.length; i++) {
+      // Calcular la distancia entre la coordenada y la ubicación del usuario
       const start = {
         latitude: coordinates[i].latitude,
         longitude: coordinates[i].longitude,
@@ -96,8 +98,14 @@ export default function App() {
         longitude: userLocation.longitude,
       };
       const distanceInMeters = haversine(start, end, {unit: 'meter'});
-      if (distanceInMeters <= maxDistance) {
+      
+      // Filtrar por distancia y delito
+      if (filterDelito && coordinates[i].delito !== filterDelito) continue;
+      
+      // Verificar si la distancia entre la coordenada y la ubicación del usuario es menor o igual a maxDistance o filterDistance
+      if (filterDistance ? distanceInMeters <= filterDistance : distanceInMeters <= maxDistance) {
         let grouped = false;
+        // Buscar un grupo existente para agregar la coordenada
         for (let j = 0; j < groups.length; j++) {
           for (let k = 0; k < groups[j].length; k++) {
             const start = {
@@ -109,7 +117,9 @@ export default function App() {
               longitude: groups[j][k].longitude,
             };
             const distanceInMeters = haversine(start, end, {unit: 'meter'});
+            // Verificar si la distancia entre la coordenada y el grupo es menor o igual a 28 metros
             if (distanceInMeters <= 28) {
+              // Agregar la coordenada al grupo
               groups[j].push(coordinates[i]);
               grouped = true;
               break;
@@ -117,6 +127,7 @@ export default function App() {
           }
           if (grouped) break;
         }
+        // Si no se encontró un grupo existente para agregar la coordenada, crear un nuevo grupo
         if (!grouped) groups.push([coordinates[i]]);
       }
     }
@@ -178,7 +189,7 @@ export default function App() {
           }}
           showsUserLocation={true}
         >
-        {groupCoordinates(example, 2000, location.coords).map((circle, index) => (
+        {groupCoordinates(example, 2000, location.coords, null,'asalto').map((circle, index) => (
           <React.Fragment key={index}>
             <Circle
               center={{ latitude: circle.latitude, longitude: circle.longitude }}
