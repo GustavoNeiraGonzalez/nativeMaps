@@ -99,10 +99,12 @@ export default function App() {
       };
       const distanceInMeters = haversine(start, end, {unit: 'meter'});
       
-      // Filtrar por distancia y delito
+      // aqui se verifica si hay un filtro de delito y entonces verifica si el delito coincide, si no coincide
+      // se ejecuta el continue, que en resumen hará que como no coincide ya no ejecute mas el codigo de este 
+      // ciclo y pase al siguiente ciclo
       if (filterDelito && coordinates[i].delito !== filterDelito) continue;
       
-      // Verificar si la distancia entre la coordenada y la ubicación del usuario es menor o igual a maxDistance o filterDistance
+      // operador ternario para filtrar si hay filterdistancec y si no, usar maxdistance que seria el por defecto
       if (filterDistance ? distanceInMeters <= filterDistance : distanceInMeters <= maxDistance) {
         let grouped = false;
         // Buscar un grupo existente para agregar la coordenada
@@ -189,7 +191,7 @@ export default function App() {
           }}
           showsUserLocation={true}
         >
-        {groupCoordinates(example, 2000, location.coords, null,'asalto').map((circle, index) => (
+        {groupCoordinates(example, 2000, location.coords).map((circle, index) => (
           <React.Fragment key={index}>
             <Circle
               center={{ latitude: circle.latitude, longitude: circle.longitude }}
