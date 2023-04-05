@@ -8,10 +8,34 @@ import * as Location from 'expo-location';
 import haversine from 'haversine';
 
 export default function App() {
-
   const currentYear = new Date().getFullYear();
+  const currentMonth = new Date().getMonth();
   const years = Array.from({length: currentYear - 2000 + 1}, (v, i) => 2000 + i);
+  const months = [
+    {name: 'Enero', value: 0},
+    {name: 'Febrero', value: 1},
+    {name: 'Marzo', value: 2},
+    {name: 'Abril', value: 3},
+    {name: 'Mayo', value: 4},
+    {name: 'Junio', value: 5},
+    {name: 'Julio', value: 6},
+    {name: 'Agosto', value: 7},
+    {name: 'Septiembre', value: 8},
+    {name: 'Octubre', value: 9},
+    {name: 'Noviembre', value: 10},
+    {name: 'Diciembre', value: 11}
+  ];
   const [selectedYear, setSelectedYear] = useState(currentYear);
+  const [selectedMonth, setSelectedMonth] = useState(currentMonth);
+  
+  const getAvailableMonths = () => {
+    if (selectedYear === currentYear) {
+      return months.filter(month => month.value <= currentMonth);
+    } else {
+      return months;
+    }
+  }
+
 
   const example = [
     { "latitude": -33.59522924065171, "longitude": -70.67142482846975, "fecha": "13:45 02/01 2023", "delito": "asalto" },
@@ -268,16 +292,17 @@ dateLimit.setMilliseconds(0); // Establecer los milisegundos en 0
         </View>
         <View styles={styles.selectorColumn}>
           <Text style={styles.selectortext}>Elegir Mes:</Text>
-            <Picker style={styles.selectorPick}
-              selectedValue={selectedYear}
-              onValueChange={(itemValue) => {
-                setSelectedYear(itemValue)}}
-            >
-              {years.map((year) => (
-                <Picker.Item key={year} label={year.toString()} value={year} />
-              ))}
-            </Picker>
+          <Picker style={styles.selectorPick}
+            selectedValue={selectedMonth}
+            onValueChange={(itemValue) => {
+              setSelectedMonth(itemValue)}}
+          >
+            {getAvailableMonths().map((month) => (
+              <Picker.Item key={month.value} label={month.name} value={month.value} />
+            ))}
+          </Picker>
         </View>
+
         <View styles={styles.selectorColumn}>
           <Text style={styles.selectortext}>Elegir Hora:</Text>
             <Picker style={styles.selectorPick}
