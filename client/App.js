@@ -25,6 +25,9 @@ export default function App() {
     {name: 'Noviembre', value: 10},
     {name: 'Diciembre', value: 11}
   ];
+  const hours = Array.from({length: 24}, (v, i) => i);
+  const [selectedHour, setSelectedHour] = useState(0);
+
   const [selectedYear, setSelectedYear] = useState(currentYear);
   const [selectedMonth, setSelectedMonth] = useState(currentMonth);
   
@@ -302,20 +305,18 @@ dateLimit.setMilliseconds(0); // Establecer los milisegundos en 0
             ))}
           </Picker>
         </View>
-
         <View styles={styles.selectorColumn}>
           <Text style={styles.selectortext}>Elegir Hora:</Text>
-            <Picker style={styles.selectorPick}
-              selectedValue={selectedYear}
-              onValueChange={(itemValue) => {
-                setSelectedYear(itemValue)}}
-            >
-              {years.map((year) => (
-                <Picker.Item key={year} label={year.toString()} value={year} />
-              ))}
-            </Picker>
+          <Picker style={styles.selectorPick}
+            selectedValue={selectedHour}
+            onValueChange={(itemValue) => {
+              setSelectedHour(itemValue)}}
+          >
+            {hours.map((hour) => (
+              <Picker.Item key={hour} label={`${hour.toString().padStart(2, '0')}:00`} value={hour} />
+            ))}
+          </Picker>
         </View>
-       
       </View>
       <View style={styles.selectorButton}>
         <Button title="Filtrar" onPress={() => {}} />
