@@ -2,12 +2,23 @@ import React, { useEffect, useState } from 'react';
 import { Picker } from '@react-native-picker/picker';
 
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, Button } from 'react-native';
+import { StyleSheet, Text, View, Button, TextInput } from 'react-native';
 import MapView, {Circle,Marker,Callout} from 'react-native-maps';
 import * as Location from 'expo-location';
 import haversine from 'haversine';
 
 export default function App() {
+  const [isFiltered, setIsFiltered] = useState(false); // dato para usar la funcion de filtración
+
+  const crimes = ['---','Asalto', 'Hurto'];
+  const [selectedCrime, setSelectedCrime] = useState(crimes[0]);
+  const [filterDistance, setFilterDistance] = useState('');
+  const handleFilterDistanceChange = (text) => {
+    if (text.length <= 6 && /^\d*$/.test(text)) {
+      setFilterDistance(text);
+    }
+}
+
   const currentYear = new Date().getFullYear();
   const currentMonth = new Date().getMonth();
   const years = Array.from({length: currentYear - 2000 + 1}, (v, i) => 2000 + i);
@@ -27,12 +38,13 @@ export default function App() {
   ];
   const hours = Array.from({length: 24}, (v, i) => i);
   const [selectedHour, setSelectedHour] = useState(0);
+  const [selectedYearShow, setselectedYearShow] = useState(currentYear);//esto para dar información al cliente
+  const [selectedMonthShow, setselectedMonthShow] = useState(currentMonth);//esto para dar información al cliente
+  const [selectedYearFunction, setselectedYearFunction] = useState(null);//esto para hacer la funcion de filtro
+  const [selectedMonthFunction, setselectedMonthFunction] = useState(null);//esto para hacer la funcion de filtro
 
-  const [selectedYear, setSelectedYear] = useState(currentYear);
-  const [selectedMonth, setSelectedMonth] = useState(currentMonth);
-  
   const getAvailableMonths = () => {
-    if (selectedYear === currentYear) {
+    if (selectedYearShow === currentYear) {
       return months.filter(month => month.value <= currentMonth);
     } else {
       return months;
@@ -86,8 +98,6 @@ export default function App() {
         
       }
     );
-    console.log('XD')
-
   }
 
   let text = 'Waiting..';
@@ -96,25 +106,6 @@ export default function App() {
   } else if (location) {
     text = JSON.stringify(location);
   }
-  //aqui se filtra aquellas localizaciónes que esten a menos de x metros
-  const filteredExamples = example.filter((example) => {
-    //al hacer el if se evita el error al no tener las coordenadas inmediatamente porque
-    //obtener las coordenadas especificas toma un poco de tiempo
-    if (location && location.coords) {
-    
-    const start = {
-      latitude: example.latitude,
-      longitude: example.longitude,
-    };
-    const end = {
-      latitude: location.coords.latitude,
-      longitude: location.coords.longitude,
-    };
-    const distanceInMeters = haversine(start, end, {unit: 'meter'});
-    //aqui se filtra la distancia en metros
-    return distanceInMeters <= 2000;
-  }
-  });
 
   //aqui se calcula las coordenadas en x metros del usuario, las filtra y las junta las cercanas----------
   const groupCoordinates = (coordinates, maxDistance, userLocation,
@@ -197,12 +188,7 @@ export default function App() {
       return result;
     });
   }
-   
-
   
-  if (location && location.coords) {
-    const groupedCoordinates = groupCoordinates(example, 2000, location.coords);
-  }
   const formatDatesAndCrimes = (dates, crimes) => {
     let result = '';
     for (let i = 0; i < dates.length; i++) {
@@ -210,19 +196,41 @@ export default function App() {
     }
     return result;
    
-}
-const dateLimit = new Date();
-dateLimit.setFullYear(2023); // Establecer el año en 2023
-dateLimit.setMonth(2); // Marzo es el mes 2 (Enero es 0)
-dateLimit.setDate(3); // Establecer el día en 2 para obtener el segundo día del mes
-dateLimit.setHours(0); // Establecer la hora en 0 para obtener la primera hora del día
-dateLimit.setMinutes(0); // Establecer los minutos en 0
-dateLimit.setSeconds(0); // Establecer los segundos en 0
-dateLimit.setMilliseconds(0); // Establecer los milisegundos en 0
+  }
+  const GetDateUser = (selectedYearFunction, selectedMonthFunction, selectedHour) =>{
+    if (selectedYearFunction || selectedMonthFunction || selectedHour){
+    const dateLimit = new Date();
+    dateLimit.setFullYear(selectedYearFunction ? selectedYearFunction : currentYear); // Establecer el año 
+    dateLimit.setMonth(selectedMonthFunction ? selectedMonthFunction : 0); // Marzo es el mes 2 (Enero es 0)
+    dateLimit.setDate(1); // Establecer el día 1 
+    dateLimit.setHours(selectedHour ? selectedHour : 0); // Establecer la hora 
+    dateLimit.setMinutes(0); // Establecer los minutos
+    dateLimit.setSeconds(0); // Establecer los segundos 
+    dateLimit.setMilliseconds(0); // Establecer los milisegundos 
+    return dateLimit;
+    }else{
+      //con el if verificamos que la funcion tiene parametros, y si no los tiene 
+      //retornará null para usar la funcion mas adelante sin usar operadores ternarios 
+      return null
+    }
+  }
+
+  const getFilteredCoordsData = () =>{
+    return  groupCoordinates(example, 2000, location.coords,
+      filterDistance ? filterDistance : null,//filtrar distancia
+      selectedCrime !== '---' ? selectedCrime : null,//filtrar crimen
+      //filtrar fecha por año o mes o hora
+      GetDateUser(selectedYearFunction ?selectedYearFunction : null, 
+         selectedMonthFunction ? selectedMonthFunction : null, 
+         selectedHour ? selectedHour : null)
+         )
+  }
+
   return (
     <View style={styles.container}>
       <View style={styles.containermap}>
       {location ? (
+        /*aqui se crea la base del mapa */
         <MapView
           style={styles.map}
           region={{
@@ -243,7 +251,10 @@ dateLimit.setMilliseconds(0); // Establecer los milisegundos en 0
           }}
           showsUserLocation={true}
         >
-        {groupCoordinates(example, 2000, location.coords, null, null, dateLimit).map((circle, index) => (
+          {/*Aqui se muestra las marcas en el mapa */}
+          {(isFiltered ? getFilteredCoordsData() : groupCoordinates(example, 2000, location.coords)).map(
+  (circle, index) => (
+
           <React.Fragment key={index}>
             <Circle
               center={{ latitude: circle.latitude, longitude: circle.longitude }}
@@ -263,16 +274,20 @@ dateLimit.setMilliseconds(0); // Establecer los milisegundos en 0
           </React.Fragment>))}
           
         </MapView>
+        /*ERROR DE CARGA DE MAPA */
       ) : errorMsg ? (
         <View style={styles.errorContainer}>
           <Text style={styles.errorContainer}>{errorMsg}</Text>
         </View>
       ) : (
+        /*LO QUE SE MUESTRA MIENTRAS  CARGA MAPA  */
         <View style={styles.loadingContainer}>
           <Text style={styles.loadingContainer}>Cargando ubicación...</Text>
         </View>
       )}
       </View>
+      {/*MARCADOR DE UBICACIÓN */}
+
       {location &&(
       <Button title="Marcar ubicación" onPress={()=>{
         handlePress(location.coords.latitude,location.coords.longitude)
@@ -280,31 +295,40 @@ dateLimit.setMilliseconds(0); // Establecer los milisegundos en 0
         } label="xd"/>
         )}
         <StatusBar style="auto" />
+      {/*SELECTOR DE AÑO */}
+
       <View style={styles.selectorView}>
         <View styles={styles.selectorColumn}>
           <Text style={styles.selectortext}>Elegir Año:</Text>
           <Picker style={styles.selectorPick}
-            selectedValue={selectedYear}
+            selectedValue={setselectedYearShow}
             onValueChange={(itemValue) => {
-              setSelectedYear(itemValue)}}
+              setselectedYearShow(itemValue)
+              setselectedYearFunction(itemValue)
+            }}
           >
             {years.map((year) => (
               <Picker.Item key={year} label={year.toString()} value={year} />
             ))}
           </Picker>
         </View>
+        {/*SELECTOR DE MES */}
+
         <View styles={styles.selectorColumn}>
           <Text style={styles.selectortext}>Elegir Mes:</Text>
           <Picker style={styles.selectorPick}
-            selectedValue={selectedMonth}
+            selectedValue={selectedMonthShow}
             onValueChange={(itemValue) => {
-              setSelectedMonth(itemValue)}}
+              setselectedMonthShow(itemValue);
+              setselectedMonthFunction(itemValue);
+            }}
           >
             {getAvailableMonths().map((month) => (
               <Picker.Item key={month.value} label={month.name} value={month.value} />
             ))}
           </Picker>
         </View>
+        {/*SELECTOR DE HORA */}
         <View styles={styles.selectorColumn}>
           <Text style={styles.selectortext}>Elegir Hora:</Text>
           <Picker style={styles.selectorPick}
@@ -318,8 +342,34 @@ dateLimit.setMilliseconds(0); // Establecer los milisegundos en 0
           </Picker>
         </View>
       </View>
+      <View style={styles.selectorView}>
+        <View styles={styles.selectorColumn}>
+          <Text style={styles.selectortext}>Elegir Delito:</Text>
+          <Picker style={styles.selectorPick}
+            selectedValue={selectedCrime}
+            onValueChange={(itemValue) => {
+              setSelectedCrime(itemValue)}}
+          >
+            {crimes.map((crime) => (
+              <Picker.Item key={crime} label={crime} value={crime} />
+            ))}
+          </Picker>
+        </View>
+        <View styles={styles.selectorColumn}>
+          <Text style={styles.selectortext}>Distancia (en metros):</Text>
+          <TextInput
+            style={styles.selectorTextInput}
+            value={filterDistance}
+            onChangeText={handleFilterDistanceChange}
+            keyboardType="numeric"
+          />
+        </View>
+      </View>
       <View style={styles.selectorButton}>
-        <Button title="Filtrar" onPress={() => {}} />
+      <Button title="Filter" onPress={() => setIsFiltered(true)} />
+      </View>
+      <View style={styles.selectorButton}>
+      <Button title="Desfiltrar" onPress={() => setIsFiltered(false)} />
       </View>
     </View>
   );
@@ -384,6 +434,11 @@ const styles = StyleSheet.create({
   selectorColumn:{
     flexDirection: 'column',
     alignItems:'center'
+  },
+  selectorTextInput:{
+    backgroundColor:'#9999',
+    borderRadius:10,
+    color: 'wheat',
   }
 });
 
