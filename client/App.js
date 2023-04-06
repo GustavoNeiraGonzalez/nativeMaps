@@ -6,7 +6,10 @@ import { Text, View, Button, TextInput } from 'react-native';
 import MapView, {Circle,Marker,Callout} from 'react-native-maps';
 import * as Location from 'expo-location';
 import haversine from 'haversine';
+import example from './components/mapa/ubicaciones'
 import requestLocationPermissions from './components/mapa/PermisosUbi'
+import months from './components/mapa/months'
+import GetDateUser from './components/mapa/GetDateUser'
 
 export default function App() {
   const [isFiltered, setIsFiltered] = useState(false); // dato para usar la funcion de filtración
@@ -23,20 +26,6 @@ export default function App() {
   const currentYear = new Date().getFullYear();
   const currentMonth = new Date().getMonth();
   const years = Array.from({length: currentYear - 2000 + 1}, (v, i) => 2000 + i);
-  const months = [
-    {name: 'Enero', value: 0},
-    {name: 'Febrero', value: 1},
-    {name: 'Marzo', value: 2},
-    {name: 'Abril', value: 3},
-    {name: 'Mayo', value: 4},
-    {name: 'Junio', value: 5},
-    {name: 'Julio', value: 6},
-    {name: 'Agosto', value: 7},
-    {name: 'Septiembre', value: 8},
-    {name: 'Octubre', value: 9},
-    {name: 'Noviembre', value: 10},
-    {name: 'Diciembre', value: 11}
-  ];
   const hours = Array.from({length: 24}, (v, i) => i);
   const [selectedHour, setSelectedHour] = useState(0);
   const [selectedYearShow, setselectedYearShow] = useState(currentYear);//esto para dar información al cliente
@@ -52,19 +41,6 @@ export default function App() {
     }
   }
 
-
-  const example = [
-    { "latitude": -33.59522924065171, "longitude": -70.67142482846975, "fecha": "13:45 02/01 2023", "delito": "asalto" },
-    { "latitude": -33.604710911424135, "longitude": -70.6145080178976, "fecha": "14:00 03/02 2023", "delito": "hurto" },
-    { "latitude": -33.57073091478793, "longitude": -70.60186006128788, "fecha": "15:15 04/01 2023", "delito": "asalto" },
-    { "latitude": -33.580926151345786, "longitude": -70.64625162631273, "fecha": "16:30 05/02 2023", "delito": "hurto"},
-    { "latitude": -33.580926151345786, "longitude": -70.64625162631273, "fecha": "16:30 05/02 2023", "delito": "hurto"},
-
-    { "latitude": -33.580926151345786, "longitude": -70.64625162631273, "fecha": "16:30 05/02 2023", "delito": "hurto"},
-
-    { "latitude": -33.58116050080819, "longitude": -70.64616646617651, "fecha": "17:45 06/03 2023", "delito": "asalto"},
-    { "latitude": -33.58359725059294, "longitude": -70.64564276486635, "fecha": "14:00 03/03 2023", "delito": "hurto" }
-  ];
   const [location, setLocation] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
   const [userLocation, setUserLocation] = useState(null);
@@ -76,8 +52,6 @@ export default function App() {
   useEffect(() => {
     requestLocationPermissions(setErrorMsg, setLocation);
   }, []);
-  
-  
 
   let text = 'Waiting..';
   if (errorMsg) {
@@ -99,7 +73,6 @@ export default function App() {
       // Obtener la fecha límite, si no hay fecha limite entonces es la fecha actual menos 1 año
       const dateLimit = filterDate ? filterDate : new Date(new Date().setFullYear(new Date().getFullYear() - 1));
       // Verificar si la fecha de la coordenada es posterior a la fecha límite
-
       
       if (coordDate < dateLimit) continue;
         // Calcular la distancia entre la coordenada y la ubicación del usuario
@@ -147,7 +120,7 @@ export default function App() {
         if (!grouped) groups.push([coordinates[i]]);
       }
     }
-     //aqui se modifica las coordenadas que esten cercas entre si y calcular un punto medio
+    //aqui se modifica las coordenadas que esten cercas entre si y calcular un punto medio
     //y reemplazar ambas coordenadas para que solo quede ese punto medio
 
     return groups.map(group => {
@@ -167,31 +140,13 @@ export default function App() {
       return result;
     });
   }
-  
+  //aqui le doy un formato a los datos de dates y crimes para mostrarlas al cliente
   const formatDatesAndCrimes = (dates, crimes) => {
     let result = '';
     for (let i = 0; i < dates.length; i++) {
         result += `Fecha: ${dates[i]} - Delito: ${crimes[i]}\n`;
     }
     return result;
-   
-  }
-  const GetDateUser = (selectedYearFunction, selectedMonthFunction, selectedHour) =>{
-    if (selectedYearFunction || selectedMonthFunction || selectedHour){
-    const dateLimit = new Date();
-    dateLimit.setFullYear(selectedYearFunction ? selectedYearFunction : currentYear); // Establecer el año 
-    dateLimit.setMonth(selectedMonthFunction ? selectedMonthFunction : 0); // Marzo es el mes 2 (Enero es 0)
-    dateLimit.setDate(1); // Establecer el día 1 
-    dateLimit.setHours(selectedHour ? selectedHour : 0); // Establecer la hora 
-    dateLimit.setMinutes(0); // Establecer los minutos
-    dateLimit.setSeconds(0); // Establecer los segundos 
-    dateLimit.setMilliseconds(0); // Establecer los milisegundos 
-    return dateLimit;
-    }else{
-      //con el if verificamos que la funcion tiene parametros, y si no los tiene 
-      //retornará null para usar la funcion mas adelante sin usar operadores ternarios 
-      return null
-    }
   }
 
   const getFilteredCoordsData = () =>{
@@ -201,7 +156,8 @@ export default function App() {
       //filtrar fecha por año o mes o hora
       GetDateUser(selectedYearFunction ?selectedYearFunction : null, 
          selectedMonthFunction ? selectedMonthFunction : null, 
-         selectedHour ? selectedHour : null)
+         selectedHour ? selectedHour : null,
+         currentYear)
          )
   }
 
