@@ -230,6 +230,7 @@ export default function App() {
     <View style={styles.container}>
       <View style={styles.containermap}>
       {location ? (
+        
         /*aqui se crea la base del mapa */
         <MapView
           style={styles.map}
@@ -246,12 +247,12 @@ export default function App() {
               requestLocationPermissions();
             }else{
               const { latitude, longitude } = event.nativeEvent.coordinate;
-              console.log({ latitude, longitude })
             }
           }}
           showsUserLocation={true}
         >
-          {/*Aqui se muestra las marcas en el mapa */}
+          {/*Aqui se muestra las marcas en el mapa pero verifica si isfiltered es true o false, si es
+          false se usa unos filtros por defecto */}
           {(isFiltered ? getFilteredCoordsData() : groupCoordinates(example, 2000, location.coords)).map(
   (circle, index) => (
 
@@ -301,7 +302,7 @@ export default function App() {
         <View styles={styles.selectorColumn}>
           <Text style={styles.selectortext}>Elegir Año:</Text>
           <Picker style={styles.selectorPick}
-            selectedValue={setselectedYearShow}
+            selectedValue={selectedYearShow}
             onValueChange={(itemValue) => {
               setselectedYearShow(itemValue)
               setselectedYearFunction(itemValue)
@@ -371,9 +372,11 @@ export default function App() {
       <View style={styles.selectorButton}>
       <Button title="Desfiltrar" onPress={() => setIsFiltered(false)} />
       </View>
+      <Text style={styles.selectortext}>{isFiltered ? "Filtrado Encendido" : "Filtrado Apagado"} </Text>
     </View>
   );
 };
+console.log
 
 const styles = StyleSheet.create({
   container: {
