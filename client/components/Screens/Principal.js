@@ -40,11 +40,13 @@ export default function Principal() {
       return months;
     }
   }
+  
 
   const [location, setLocation] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
   const [userLocation, setUserLocation] = useState(null);
   const [Circles, setCircles] = useState([]);
+  const [MarkPositionBtn, setMarkPositionBtn] = useState(null);
 
   function handlePress(latitude, longitude)  {
       setUserLocation({latitude,longitude})
@@ -159,8 +161,12 @@ export default function Principal() {
          selectedHour ? selectedHour : null,
          currentYear)
          )
-  }
-
+  };
+    this.state = {
+      marker: null // Inicializa la propiedad marker en null
+    };
+  
+  
   return (
     <View style={styles.container}>
       <View style={styles.containermap}>
@@ -177,15 +183,18 @@ export default function Principal() {
           }}
           onPress={async (event) => {
             event.persist();
-            const { status } = await Location.getForegroundPermissionsAsync();
-            if (status !== 'granted') {
-              requestLocationPermissions();
-            }else{
-              const { latitude, longitude } = event.nativeEvent.coordinate;
-            }
+
+            const { latitude, longitude } = event.nativeEvent.coordinate;
+            // Actualiza el estado con las coordenadas del evento de toque
+            setMarkPositionBtn({"latitude":latitude,"longitude":longitude})
+              
           }}
           showsUserLocation={true}
         >
+            {/* Agrega un marcador en la posición especificada en el estado */}
+            {MarkPositionBtn && (
+                <Marker coordinate={{latitude:MarkPositionBtn.latitude,longitude:MarkPositionBtn.longitude}}  pinColor={'#00FF00'} />
+            )}
           {/*Aqui se muestra las marcas en el mapa pero verifica si isfiltered es true o false, si es
           false se usa unos filtros por defecto */}
           {(isFiltered ? getFilteredCoordsData() : groupCoordinates(example, 2000, location.coords)).map(

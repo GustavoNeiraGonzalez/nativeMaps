@@ -8,8 +8,10 @@ const Stack = createNativeStackNavigator();
 const SomosStack = () => {
   return (
     <Stack.Navigator>
-      <Stack.Screen name="Somos" component={Somos}   options={{ headerShown: false }}/>
-      <Stack.Screen name="Principal" component={Principal}   options={{ headerShown: false }}/>
+      <Stack.Screen name="Somoss" component={Somos}   options={{ headerShown: false , headerTitleStyle: { color: "wheat" },
+    headerStyle: { backgroundColor: "#292929" },}}/>
+      <Stack.Screen name="Principall" component={Principal}   options={{ headerShown: false , headerTitleStyle: { color: "wheat" },
+    headerStyle: { backgroundColor: "#292929" },}}/>
     </Stack.Navigator>
   );
 };

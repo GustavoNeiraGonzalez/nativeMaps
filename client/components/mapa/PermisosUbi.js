@@ -15,7 +15,7 @@ import * as Location from 'expo-location';
       {
         accuracy: Location.Accuracy.Highest,
         timeInterval: 8000,
-        distanceInterval: 2,
+        distanceInterval: 5,
       },
       (newLocation) => {
         setLocation(newLocation);
