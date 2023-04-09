@@ -44,7 +44,9 @@ const styles = StyleSheet.create({
     selectorPick:{
       height: 50, 
       width: 150,
-      color:'wheat'
+      color:'wheat',
+      backgroundColor:'#292925',
+      borderRadius:10,
     },
     selectorView:{
       maxWidth: '90%', 
@@ -63,7 +65,38 @@ const styles = StyleSheet.create({
       backgroundColor:'#9999',
       borderRadius:10,
       color: 'wheat',
-    }
+    }, 
+    modalView: {
+      backgroundColor: '#292929',
+      padding: 20,
+      alignItems: 'center',
+      justifyContent: 'center',
+      alignSelf: 'center',
+      width: '80%',
+      height: '50%',
+      position: 'absolute',
+      top: '25%',
+      left: '10%',
+      borderRadius: 10,
+    },
+    modalText: {
+      color: 'wheat',
+      fontSize: 18,
+      marginBottom: 10,
+    },
+    modalInput: {
+      backgroundColor: '#444',
+      color: 'wheat',
+      width: '50%',
+      padding: 5,
+      borderRadius: 5,
+      marginBottom: 10,
+    },
+    modalButtons: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      width: '100%',
+    },
   });
   
   export default styles;

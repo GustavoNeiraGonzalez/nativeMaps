@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Picker } from '@react-native-picker/picker';
 import styles from '../mapa/estilos'
 import { StatusBar } from 'expo-status-bar';
-import { Text, View, Button, TextInput } from 'react-native';
+import { Switch,Modal,Text, View, Button, TextInput } from 'react-native';
 import MapView, {Circle,Marker,Callout} from 'react-native-maps';
 import * as Location from 'expo-location';
 import haversine from 'haversine';
@@ -13,15 +13,26 @@ import GetDateUser from '../mapa/GetDateUser'
 
 export default function Principal() {
   const [isFiltered, setIsFiltered] = useState(false); // dato para usar la funcion de filtración
+  const [modalVisible, setModalVisible] = useState(false);
+  const [useCurrentDate, setUseCurrentDate] = useState(false);
 
   const crimes = ['---','Asalto', 'Hurto'];
   const [selectedCrime, setSelectedCrime] = useState(crimes[0]);
+  const [selectedCrimeBtn, setSelectedCrimeBtn] = useState(crimes[0]);
+  const currenttHour = new Date().getHours();
+  const currenttminute = new Date().getMinutes();
+  const [selectedHourBtn, setSelectedHourBtn] = useState(currenttHour);
+  const [selectedMinuteBtn, setSelectedMinuteBtn] = useState(currenttminute);
+
   const [filterDistance, setFilterDistance] = useState('');
   const handleFilterDistanceChange = (text) => {
     if (text.length <= 6 && /^\d*$/.test(text)) {
       setFilterDistance(text);
     }
 }
+   
+
+
 
   const currentYear = new Date().getFullYear();
   const currentMonth = new Date().getMonth();
@@ -33,6 +44,32 @@ export default function Principal() {
   const [selectedYearFunction, setselectedYearFunction] = useState(null);//esto para hacer la funcion de filtro
   const [selectedMonthFunction, setselectedMonthFunction] = useState(null);//esto para hacer la funcion de filtro
 
+  // Genera una lista de horas válidas
+  const getAvailableHours = () => {
+    const currentHour = new Date().getHours();
+    const hoursBtn = []
+    for (let i = 0; i <= currentHour; i++) {
+        hoursBtn.push(i.toString().padStart(2, '0'));
+    }
+    return hoursBtn;
+  };
+
+  // Genera una lista de minutos válidos
+  
+  const getAvailableMinutes = (selectedHourBtn) => {
+    const currentHour = new Date().getHours();
+    const currentMinute = new Date().getMinutes();
+    const minutesBtn = [];
+    for (let i = 0; i < 60; i++) {
+      if (selectedHourBtn ? Number(selectedHourBtn) === currentHour && i > currentMinute : i > currentMinute ) {
+        break;
+      }
+      minutesBtn.push(i.toString().padStart(2, '0'));
+    }
+    return minutesBtn;
+  };  
+ 
+
   const getAvailableMonths = () => {
     if (selectedYearShow === currentYear) {
       return months.filter(month => month.value <= currentMonth);
@@ -41,6 +78,7 @@ export default function Principal() {
     }
   }
   
+
 
   const [location, setLocation] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
@@ -162,10 +200,6 @@ export default function Principal() {
          currentYear)
          )
   };
-    this.state = {
-      marker: null // Inicializa la propiedad marker en null
-    };
-  
   
   return (
     <View style={styles.container}>
@@ -235,10 +269,70 @@ export default function Principal() {
 
       {location &&(
       <Button title="Marcar ubicación" onPress={()=>{
-        handlePress(location.coords.latitude,location.coords.longitude)
-      }
+        setModalVisible(true)
+          }
         } label="xd"/>
         )}
+        {/*-------------------- */}
+        <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+      >
+        <View style={styles.modalView}>
+          <Text style={styles.modalText}>Selecciona un delito:</Text>
+          {crimes.map((crime) => (
+            <Button
+              key={crime}
+              title={crime}
+              color={selectedCrimeBtn === crime ? 'wheat' : '#444'}
+              onPress={() => setSelectedCrimeBtn(crime)}
+            />
+          ))}
+          <View style={styles.modalSwitch}>
+            <Text style={styles.modalText}>Usar Hora actual:</Text>
+            <Switch
+              value={useCurrentDate}
+              onValueChange={(value) => {
+                setUseCurrentDate(value);
+
+              }}
+            />
+          </View>
+            <View>
+                <Text style={styles.selectortext}>hora</Text>
+                <Picker
+                    selectedValue={selectedHourBtn } style={styles.selectorPick}
+                    onValueChange={(itemValue) => {setSelectedHourBtn(itemValue)}}>
+                    {getAvailableHours().map((hour) => (
+                    <Picker.Item key={hour} label={hour} value={hour} />
+                    ))}
+                </Picker>
+                <Text style={styles.selectortext}>Minuto</Text>
+
+                <Picker selectedValue={selectedMinuteBtn } style={styles.selectorPick}
+                    onValueChange={(itemValue) => {setSelectedMinuteBtn(itemValue)}}>
+                    {getAvailableMinutes(selectedHourBtn).map((minute) => (
+                    <Picker.Item key={minute} label={minute} value={minute} />
+                    ))}
+                </Picker>
+            </View>
+          <View style={styles.modalButtons}>
+            <Button
+              title="Aceptar"
+              onPress={() => {
+                // Aquí puedes manejar la selección del usuario
+                setModalVisible(false);
+              }}
+            />
+            <Button
+              title="Rechazar"
+              onPress={() => setModalVisible(false)}
+            />
+          </View>
+        </View>
+      </Modal>
+        {/*-------------------------*/}
         <StatusBar style="auto" />
       {/*SELECTOR DE AÑO */}
 
