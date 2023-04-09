@@ -15,6 +15,7 @@ export default function Principal() {
   const [isFiltered, setIsFiltered] = useState(false); // dato para usar la funcion de filtración
   const [modalVisible, setModalVisible] = useState(false);
   const [useCurrentDate, setUseCurrentDate] = useState(false);
+  const [useCurrentLocationBtn, setUseCurrentLocationBtn] = useState(false);
 
   const crimes = ['---','Asalto', 'Hurto'];
   const [selectedCrime, setSelectedCrime] = useState(crimes[0]);
@@ -274,6 +275,7 @@ export default function Principal() {
         } label="xd"/>
         )}
         {/*-------------------- */}
+
         <Modal
         animationType="slide"
         transparent={true}
@@ -281,24 +283,40 @@ export default function Principal() {
       >
         <View style={styles.modalView}>
           <Text style={styles.modalText}>Selecciona un delito:</Text>
-          {crimes.map((crime) => (
-            <Button
-              key={crime}
-              title={crime}
-              color={selectedCrimeBtn === crime ? 'wheat' : '#444'}
-              onPress={() => setSelectedCrimeBtn(crime)}
-            />
-          ))}
+
+            <Picker
+            selectedValue={selectedCrimeBtn } style={styles.selectorPick}
+            onValueChange={(itemValue) => {setSelectedCrimeBtn(itemValue)}}>
+            {crimes.map((crime) => (
+
+            <Picker.Item key={crime} label={crime} value={crime} />
+            ))}
+        </Picker>
+
           <View style={styles.modalSwitch}>
             <Text style={styles.modalText}>Usar Hora actual:</Text>
             <Switch
               value={useCurrentDate}
               onValueChange={(value) => {
                 setUseCurrentDate(value);
-
+                setSelectedHourBtn(currenttHour)
+                setSelectedMinuteBtn(currenttminute)
               }}
             />
           </View>
+          <View style={styles.modalSwitch}>
+            <Text style={styles.modalText}>Usar ubicación actual:</Text>
+            <Text style={styles.modalSubText}>(Al no seleccionar se usará la marca creada</Text>
+            <Text style={styles.modalSubText}> en el mapa)</Text>
+            <Switch
+              value={useCurrentLocationBtn}
+              onValueChange={(value) => {
+                setUseCurrentLocationBtn(value);
+              }}
+            />
+          </View>
+          {!useCurrentDate &&(
+
             <View>
                 <Text style={styles.selectortext}>hora</Text>
                 <Picker
@@ -317,6 +335,7 @@ export default function Principal() {
                     ))}
                 </Picker>
             </View>
+            )}
           <View style={styles.modalButtons}>
             <Button
               title="Aceptar"

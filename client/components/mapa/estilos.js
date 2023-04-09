@@ -67,15 +67,15 @@ const styles = StyleSheet.create({
       color: 'wheat',
     }, 
     modalView: {
-      backgroundColor: '#292929',
+      backgroundColor: '#292935',
       padding: 20,
       alignItems: 'center',
       justifyContent: 'center',
       alignSelf: 'center',
       width: '80%',
-      height: '50%',
+      height: '70%',
       position: 'absolute',
-      top: '25%',
+      top: '15%',
       left: '10%',
       borderRadius: 10,
     },
@@ -83,6 +83,12 @@ const styles = StyleSheet.create({
       color: 'wheat',
       fontSize: 18,
       marginBottom: 10,
+    },
+    modalSubText: {
+      color: 'wheat',
+      fontSize: 8,
+      marginBottom: 10,
+      textAlign:'center'
     },
     modalInput: {
       backgroundColor: '#444',
