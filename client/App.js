@@ -4,6 +4,7 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import PrincipalStack from "./components/Stacks/PrincipalStack";
 import SomosStack from "./components/Stacks/SomosStack";
 import LoginStack from "./components/Stacks/LoginStack";
+import CreateStack from "./components/Stacks/CreateStack";
 
 const Tab = createBottomTabNavigator();
 
@@ -21,6 +22,10 @@ headerTitleStyle: { color: "wheat" },
 headerTitleStyle: { color: "wheat" },
     headerStyle: { backgroundColor: "#292929" }, }}/>
               <Tab.Screen name="Login" component={LoginStack}    options={{
+headerTitleStyle: { color: "wheat" },
+    headerStyle: { backgroundColor: "#292929" }, }}
+          />
+           <Tab.Screen name="Create" component={CreateStack}    options={{
 headerTitleStyle: { color: "wheat" },
     headerStyle: { backgroundColor: "#292929" }, }}
           />

@@ -20,10 +20,5 @@ export default StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
     color: 'wheat'
-  },
-  text: {
-    fontSize: 14,
-    fontWeight: 'bold',
-    color: 'wheat'
   }
 });
