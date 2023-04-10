@@ -25,7 +25,7 @@ headerTitleStyle: { color: "wheat" },
 headerTitleStyle: { color: "wheat" },
     headerStyle: { backgroundColor: "#292929" }, }}
           />
-           <Tab.Screen name="Create" component={CreateStack}    options={{
+           <Tab.Screen name="Crear Usuario" component={CreateStack}    options={{
 headerTitleStyle: { color: "wheat" },
     headerStyle: { backgroundColor: "#292929" }, }}
           />

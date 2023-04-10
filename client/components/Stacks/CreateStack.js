@@ -7,7 +7,7 @@ import Create from '../Screens/Create'
 
 const Stack = createNativeStackNavigator();
 
-const LoginStack = () => {
+const CreateStack = () => {
   return (
       
     <Stack.Navigator>
@@ -24,4 +24,4 @@ const LoginStack = () => {
   );
 };
 
-export default LoginStack;
+export default CreateStack;
