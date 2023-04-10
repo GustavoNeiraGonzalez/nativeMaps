@@ -106,6 +106,7 @@ export default function Login() {
       <Button
               title="Aceptar"
               onPress={() => {
+                Login()
               }}
             />
     </View>
