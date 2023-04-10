@@ -89,6 +89,9 @@ export default function Create() {
             password: password
         })
         .then(response => {
+            setPassword('');
+            setUsername('');
+            setEmail('');
             // Manejar la respuesta del servidor
         })
         .catch(error => {

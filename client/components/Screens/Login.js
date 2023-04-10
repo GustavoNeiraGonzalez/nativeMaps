@@ -36,7 +36,7 @@ export default function Login() {
         }
     }
 
-    const createUser = () => {    
+    const Login = () => {    
         // Validar nombre de usuario
         if (username.length < 4) {
             alert('El nombre de usuario debe tener al menos 4 caracteres');
@@ -64,10 +64,11 @@ export default function Login() {
         // Enviar solicitud al servidor
         axios.post('<URL>', {
             username: username,
-            email: email,
             password: password
         })
         .then(response => {
+            setPassword('');
+            setUsername('');
             // Manejar la respuesta del servidor
         })
         .catch(error => {
