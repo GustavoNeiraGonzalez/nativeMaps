@@ -2,13 +2,17 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
-from .serializers import UbicacionesSerializer
-from .models import Ubicaciones
-class UbicacionApi(APIView):
+from .serializers import CrimenesSerializer
+from .models import Crimenes
+class CrimenesApi(APIView):
 
     permission_classes = [IsAuthenticated]
-    serializer_class = UbicacionesSerializer
+    serializer_class = CrimenesSerializer
     
+    def check_permissions(self, request):
+        if request.method == 'POST':
+            super().check_permissions(request)
+
     def post(self, request):
         serializer = self.serializer_class(data=request.data)
         if serializer.is_valid():
@@ -17,7 +21,7 @@ class UbicacionApi(APIView):
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     def get(self, request):
-        ubicaciones = Ubicaciones.objects.all()
+        ubicaciones = Crimenes.objects.all()
         serializer = self.serializer_class(ubicaciones, many=True)
         return Response(serializer.data)
 
