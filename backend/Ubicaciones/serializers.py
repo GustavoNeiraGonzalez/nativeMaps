@@ -11,6 +11,11 @@ class UbicacionesSerializer(serializers.ModelSerializer):
     class Meta:
         model = Ubicaciones
         fields = ['UbiId', 'crimen', 'date', 'latitude', 'longitude', 'user']
+    def create(self, validated_data):
+        user = self.context['request'].user#aqui se asigna el usuario verificado 
+        #como dato de user al modelo de ubicaciones
+        ubicacion = Ubicaciones.objects.create(user=user, **validated_data)
+        return ubicacion
 
     def validate_date(self, value):
         try:
