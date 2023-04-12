@@ -4,8 +4,8 @@ from rest_framework import routers
 
 
 router = routers.DefaultRouter()
-router.register(r'api/comentarios', UbicacionApi)
+router.register(r'api/Ubicaciones', UbicacionApi , basename='ubicacion')
 
 urlpatterns = [
-    path('api/createUbi/', UbicacionApi.as_view(), name='ubicaciones-create'),
+    path('api/createUbi/', UbicacionApi.as_view()),
 ]

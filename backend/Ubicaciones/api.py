@@ -8,7 +8,12 @@ class UbicacionApi(APIView):
 
     permission_classes = [IsAuthenticated]
     serializer_class = UbicacionesSerializer
+    queryset = Ubicaciones.objects.all()
     
+    def check_permissions(self, request):
+        if request.method == 'POST':
+            super().check_permissions(request)
+
     def post(self, request):
         serializer = self.serializer_class(data=request.data)
         if serializer.is_valid():
