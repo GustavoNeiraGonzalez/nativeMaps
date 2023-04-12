@@ -5,6 +5,8 @@ from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import send_mail
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
+from django.core.validators import validate_email
+from django.core.exceptions import ValidationError
 
 User = get_user_model()
 
@@ -29,6 +31,23 @@ class UserSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("Este nombre de usuario ya existe, ingrese uno nuevo")
         else:
             return data
+
+    def validate_email_format(self,email):
+        try:
+            validate_email(email)
+            return True
+        except ValidationError:
+            return False
+
+    def validate_password(self,password):
+        if len(password) < 5:
+            raise serializers.ValidationError("Esta contraseña debe tener un largo de 5 caracteres")
+        if not any(char.islower() for char in password):
+            raise serializers.ValidationError("Esta contraseña debe tener almenos 1 letra en minuscula")
+        if not any(char.isupper() for char in password):
+            raise serializers.ValidationError("Esta contraseña debe tener almenos 1 letra en mayuscula")
+        return True
+
 
     def send_verification_email(self, request, user):
         token = default_token_generator.make_token(user)
