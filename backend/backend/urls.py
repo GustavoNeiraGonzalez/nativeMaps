@@ -14,14 +14,19 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import path,include
 from rest_framework_simplejwt import views as jwt_views
 from UserCreate.api import userApi, check_token
+from Ubicaciones.api import UbicacionApi
 urlpatterns = [
     # ...
     path('admin/', admin.site.urls),
-
+    # checktoken sirve para ver si sirve el token al iniciar la app
+    # porque cualquier peticion que necesite authenticación ya se verifica
+    # el token por defecto por simplejwt
     path('checkToken', check_token),
+    path('',include('UbicacionApi.urls')),
+
     path('api/createUser', userApi.as_view()),
     path('api/token/', jwt_views.TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', jwt_views.TokenRefreshView.as_view(), name='token_refresh'),
