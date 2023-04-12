@@ -30,7 +30,7 @@ class UserSerializer(serializers.ModelSerializer):
         else:
             return data
 
-    def send_verification_email(request, user):
+    def send_verification_email(self, request, user):
         token = default_token_generator.make_token(user)
         uid = urlsafe_base64_encode(force_bytes(user.pk))
         verification_url = request.build_absolute_uri(f'/verify-email/{uid}/{token}/')

@@ -1,5 +1,5 @@
 from rest_framework import permissions, status
-from .serializers import loginSerializer
+from .serializers import UserSerializer
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from django.contrib.auth.models import User    
@@ -8,20 +8,22 @@ from rest_framework import status
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
 class userApi(APIView):
-    def get(self, request, user_id):
+    #--Esto es para obtener los nombres de usuario en un get
+    #def get(self, request, user_id):
         # Obtener el objeto User que quieres enviar
-        user = User.objects.get(id=user_id)
+    #    user = User.objects.get(id=user_id)
 
         # Crear un diccionario con solo el valor del campo username
-        data = {'username': user.username}
+    #    data = {'username': user.username}
 
         # Enviar la respuesta con los datos del usuario
-        return Response(data)
+    #    return Response(data)
 
     def post(self, request):
-        serializer = loginSerializer(data=request.data)
+        serializer = UserSerializer(data=request.data)
         if serializer.is_valid():
             user = serializer.save()
+            serializer.send_verification_email(request, user)
             return Response(serializer.data, status = status.HTTP_201_CREATED)
         else:
             return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)

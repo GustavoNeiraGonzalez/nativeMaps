@@ -19,8 +19,10 @@ from rest_framework_simplejwt import views as jwt_views
 from UserCreate.api import userApi, check_token
 urlpatterns = [
     # ...
-    path('checkToken', check_token),
+    path('admin/', admin.site.urls),
 
+    path('checkToken', check_token),
+    path('api/createUser', userApi.as_view()),
     path('api/token/', jwt_views.TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', jwt_views.TokenRefreshView.as_view(), name='token_refresh'),
 ]
