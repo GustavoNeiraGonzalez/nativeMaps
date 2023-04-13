@@ -3,26 +3,26 @@ from rest_framework import serializers
 from .models import Ubicaciones
 from datetime import datetime
 from Crimenes.models import Crimenes 
-from django.shortcuts import get_object_or_404
 
 User = get_user_model()
 
 class UbicacionesSerializer(serializers.ModelSerializer):
     date = serializers.SerializerMethodField()
+    crimen = serializers.CharField()
 
     class Meta:
         model = Ubicaciones
         fields = ['UbiId', 'crimen', 'date', 'latitude', 'longitude', 'user']
+
     def create(self, validated_data):
         user = self.context['request'].user
-        crime = self.context['request'].data.get('crime')
+        crime_name = validated_data.pop('crime')
         try:
-            crimen = Crimenes.objects.get(crime=crime)
+            crime_instance = Crimenes.objects.get(crimen=crime_name)
         except Crimenes.DoesNotExist:
-            # Aquí puedes manejar la excepción como quieras
-            # Por ejemplo, puedes devolver una respuesta de error
             raise serializers.ValidationError("No se encontró un crimen que coincida")
-        ubicacion = Ubicaciones.objects.create(user=user, crimen=crimen, **validated_data)
+
+        ubicacion = Ubicaciones.objects.create(user=user, crimen=crime_instance, **validated_data)
         return ubicacion
 
     def validate_date(self, value):
