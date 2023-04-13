@@ -25,6 +25,7 @@ urlpatterns = [
     # el token por defecto por simplejwt
     path('checkToken', check_token),
     path('',include('Ubicaciones.urls')),
+    path('',include('Crimenes.urls')),
 
     path('api/createUser', userApi.as_view()),
     path('api/token/', jwt_views.TokenObtainPairView.as_view(), name='token_obtain_pair'),

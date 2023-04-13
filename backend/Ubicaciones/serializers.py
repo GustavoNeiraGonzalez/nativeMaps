@@ -2,6 +2,8 @@ from django.contrib.auth import get_user_model
 from rest_framework import serializers
 from .models import Ubicaciones
 from datetime import datetime
+from Crimenes.models import Crimenes 
+from django.shortcuts import get_object_or_404
 
 User = get_user_model()
 
@@ -12,9 +14,15 @@ class UbicacionesSerializer(serializers.ModelSerializer):
         model = Ubicaciones
         fields = ['UbiId', 'crimen', 'date', 'latitude', 'longitude', 'user']
     def create(self, validated_data):
-        user = self.context['request'].user#aqui se asigna el usuario verificado 
-        #como dato de user al modelo de ubicaciones
-        ubicacion = Ubicaciones.objects.create(user=user, **validated_data)
+        user = self.context['request'].user
+        crime = self.context['request'].data.get('crime')
+        try:
+            crimen = Crimenes.objects.get(crime=crime)
+        except Crimenes.DoesNotExist:
+            # Aquí puedes manejar la excepción como quieras
+            # Por ejemplo, puedes devolver una respuesta de error
+            raise serializers.ValidationError("No se encontró un crimen que coincida")
+        ubicacion = Ubicaciones.objects.create(user=user, crimen=crimen, **validated_data)
         return ubicacion
 
     def validate_date(self, value):

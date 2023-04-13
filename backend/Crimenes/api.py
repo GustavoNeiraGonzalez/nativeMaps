@@ -8,7 +8,8 @@ class CrimenesApi(APIView):
 
     permission_classes = [IsAuthenticated]
     serializer_class = CrimenesSerializer
-    
+    queryset = Crimenes.objects.all()
+
     def check_permissions(self, request):
         if request.method == 'POST':
             super().check_permissions(request)
