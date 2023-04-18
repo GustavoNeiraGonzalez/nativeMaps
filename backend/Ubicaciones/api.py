@@ -15,12 +15,16 @@ class UbicacionApi(APIView):
             super().check_permissions(request)
 
     def post(self, request):
-        serializer = self.serializer_class(data=request.data)
+        serializer = self.serializer_class(data=request.data, context={'request': request})
         if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            ubicacion = serializer.save()
+            ubicacion_serializer = self.serializer_class(ubicacion)
+            ubicacion_data = ubicacion_serializer.data
+            return Response(ubicacion_data, status=status.HTTP_201_CREATED)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
     def get(self, request):
         ubicaciones = Ubicaciones.objects.all()
         serializer = self.serializer_class(ubicaciones, many=True)

@@ -3,11 +3,13 @@ from rest_framework import serializers
 from .models import Ubicaciones
 from datetime import datetime
 from Crimenes.models import Crimenes 
+from rest_framework_simplejwt.authentication import JWTAuthentication
+from rest_framework_simplejwt.exceptions import InvalidToken, AuthenticationFailed
 
 User = get_user_model()
 
 class UbicacionesSerializer(serializers.ModelSerializer):
-    date = serializers.SerializerMethodField()
+    date = serializers.CharField(write_only=True)
     crimen = serializers.CharField()
 
     class Meta:
@@ -15,22 +17,40 @@ class UbicacionesSerializer(serializers.ModelSerializer):
         fields = ['UbiId', 'crimen', 'date', 'latitude', 'longitude', 'user']
 
     def create(self, validated_data):
-        user = self.context['request'].user
-        crime_name = validated_data.pop('crime')
+        # Obtener el usuario autenticado actualmente
         try:
-            crime_instance = Crimenes.objects.get(crimen=crime_name)
+            user, payload = JWTAuthentication().authenticate(self.context['request'])
+        except:
+            raise serializers.ValidationError('No se ha proporcionado una clave de autenticación o es incorrecta.')
+        print(user.id)
+        print('ola')
+        validated_data['user'] = user
+
+        crime_name = validated_data.pop('crimen')
+        try:
+            crime_instance = Crimenes.objects.get(crime=crime_name)
         except Crimenes.DoesNotExist:
             raise serializers.ValidationError("No se encontró un crimen que coincida")
 
-        ubicacion = Ubicaciones.objects.create(user=user, crimen=crime_instance, **validated_data)
-        return ubicacion
+        validated_data['crimen'] = crime_instance  # Asignar la instancia de Crimenes recuperada al campo 'crimen'
 
-    def validate_date(self, value):
+        # Validar la fecha
+        date = validated_data.pop('date')
         try:
-            date = datetime.strptime(value, '%H:%M %d/%m %Y')
+            date = datetime.strptime(date, '%H:%M %d/%m %Y')
         except ValueError:
             raise serializers.ValidationError("La fecha no está en el formato correcto (hh:mm dd/mm yyyy)")
-        return date.strftime('%Y-%m-%d %H:%M:%S')
-    def get_date(self, obj):
-        date = datetime.strptime(obj.date, '%Y-%m-%d %H:%M:%S')
-        return date.strftime('%H:%M %d/%m %Y')
+        validated_data['date'] = date
+
+        ubicacion = Ubicaciones.objects.create(**validated_data)
+        return ubicacion
+
+
+
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        date = representation['date']
+        representation['date'] = date.strftime('%H:%M %d/%m %Y')
+        user = instance.user
+        representation['user'] =  {'id': user.id, 'username': user.username}         
+        return representation
