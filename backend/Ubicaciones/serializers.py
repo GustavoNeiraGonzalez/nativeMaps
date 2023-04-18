@@ -15,6 +15,7 @@ class UbicacionesSerializer(serializers.ModelSerializer):
     class Meta:
         model = Ubicaciones
         fields = ['UbiId', 'crimen', 'date', 'latitude', 'longitude', 'user']
+        read_only_fields = ['user']  # Agregar user a los campos de solo lectura
 
     def create(self, validated_data):
         # Obtener el usuario autenticado actualmente
@@ -46,11 +47,13 @@ class UbicacionesSerializer(serializers.ModelSerializer):
         return ubicacion
 
 
-
     def to_representation(self, instance):
         representation = super().to_representation(instance)
-        date = representation['date']
-        representation['date'] = date.strftime('%H:%M %d/%m %Y')
+        if 'date' in representation:
+            date = representation['date']
+            representation['date'] = date.strftime('%H:%M %d/%m %Y')
         user = instance.user
         representation['user'] =  {'id': user.id, 'username': user.username}         
         return representation
+
+
