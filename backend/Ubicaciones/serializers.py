@@ -14,11 +14,10 @@ User = get_user_model()
 class UbicacionesSerializer(serializers.ModelSerializer):
     date = serializers.CharField()
     crimen = serializers.CharField()
-
     class Meta:
         model = Ubicaciones
         fields = ['UbiId', 'crimen', 'date', 'latitude', 'longitude', 'user','fecha_creacion']
-        read_only_fields = ['user', 'date', 'fecha_creacion']  # Agregar user a los campos de solo lectura
+        read_only_fields = ['user', 'date']  # Agregar user a los campos de solo lectura
 
     def create(self, validated_data):
         # Obtener el usuario autenticado actualmente
@@ -39,11 +38,10 @@ class UbicacionesSerializer(serializers.ModelSerializer):
         validated_data['crimen'] = crime_instance  # Asignar la instancia de Crimenes recuperada al campo 'crimen'
         # Verificar si el usuario ya ha creado una ubicación hoy
         today = timezone.now().date()
-        try:
-            ubicacion = Ubicaciones.objects.filter(user=user, fecha_creacion__date=today)
+        ubicacion = Ubicaciones.objects.filter(user=user, fecha_creacion__date=today)
+        if ubicacion.exists():
             raise serializers.ValidationError('Ya has creado una ubicación hoy.')
-        except ObjectDoesNotExist:
-            pass
+      
         # Validar la fecha
         date = validated_data.pop('date')
         try:
@@ -62,7 +60,9 @@ class UbicacionesSerializer(serializers.ModelSerializer):
         representation = super().to_representation(instance)
         if 'date' in representation:
             date = parser.parse(representation['date'])
-            representation['date'] = date.strftime('%H:%M %d/%m/%Y')
+            representation['date'] = date.strftime('%H:%M %d/%m %Y')
         user = instance.user
+        representation.pop('fecha_creacion', None)  # Eliminar el campo 'fecha_creacion' del diccionario
+
         representation['user'] = {'id': user.id, 'username': user.username}         
         return representation

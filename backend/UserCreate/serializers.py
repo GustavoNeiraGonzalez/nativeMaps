@@ -35,7 +35,7 @@ class UserSerializer(serializers.ModelSerializer):
     def validate_email_format(self,email):
         try:
             validate_email(email)
-            return True
+            return email
         except ValidationError:
             return False
 
@@ -46,7 +46,7 @@ class UserSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("Esta contraseña debe tener almenos 1 letra en minuscula")
         if not any(char.isupper() for char in password):
             raise serializers.ValidationError("Esta contraseña debe tener almenos 1 letra en mayuscula")
-        return True
+        return password
 
 
     def send_verification_email(self, request, user):
