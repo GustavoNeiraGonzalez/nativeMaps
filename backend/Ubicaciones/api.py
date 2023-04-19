@@ -17,6 +17,7 @@ class UbicacionApi(APIView):
     def post(self, request):
         serializer = self.serializer_class(data=request.data, context={'request': request})
         if serializer.is_valid():
+            print(serializer.errors)
             ubicacion = serializer.save()
             ubicacion_serializer = self.serializer_class(ubicacion)
             ubicacion_data = ubicacion_serializer.data

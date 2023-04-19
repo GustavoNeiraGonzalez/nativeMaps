@@ -5,17 +5,18 @@ from datetime import datetime
 from Crimenes.models import Crimenes 
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework_simplejwt.exceptions import InvalidToken, AuthenticationFailed
+from dateutil import parser
 
 User = get_user_model()
 
 class UbicacionesSerializer(serializers.ModelSerializer):
-    date = serializers.CharField(write_only=True)
+    date = serializers.CharField()
     crimen = serializers.CharField()
 
     class Meta:
         model = Ubicaciones
         fields = ['UbiId', 'crimen', 'date', 'latitude', 'longitude', 'user']
-        read_only_fields = ['user']  # Agregar user a los campos de solo lectura
+        read_only_fields = ['user', 'date']  # Agregar user a los campos de solo lectura
 
     def create(self, validated_data):
         # Obtener el usuario autenticado actualmente
@@ -47,13 +48,13 @@ class UbicacionesSerializer(serializers.ModelSerializer):
         return ubicacion
 
 
+
+
     def to_representation(self, instance):
         representation = super().to_representation(instance)
         if 'date' in representation:
-            date = representation['date']
-            representation['date'] = date.strftime('%H:%M %d/%m %Y')
+            date = parser.parse(representation['date'])
+            representation['date'] = date.strftime('%H:%M %d/%m/%Y')
         user = instance.user
-        representation['user'] =  {'id': user.id, 'username': user.username}         
+        representation['user'] = {'id': user.id, 'username': user.username}         
         return representation
-
-
