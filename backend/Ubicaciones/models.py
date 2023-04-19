@@ -9,3 +9,5 @@ class Ubicaciones(models.Model):
     latitude = models.FloatField()
     longitude = models.FloatField()
     user = models.ForeignKey(User, on_delete=models.CASCADE)
+    fecha_creacion = models.DateTimeField(auto_now_add=True)
+

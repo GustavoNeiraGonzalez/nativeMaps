@@ -6,6 +6,8 @@ from Crimenes.models import Crimenes
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework_simplejwt.exceptions import InvalidToken, AuthenticationFailed
 from dateutil import parser
+from django.utils import timezone
+from django.core.exceptions import ObjectDoesNotExist
 
 User = get_user_model()
 
@@ -15,8 +17,8 @@ class UbicacionesSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Ubicaciones
-        fields = ['UbiId', 'crimen', 'date', 'latitude', 'longitude', 'user']
-        read_only_fields = ['user', 'date']  # Agregar user a los campos de solo lectura
+        fields = ['UbiId', 'crimen', 'date', 'latitude', 'longitude', 'user','fecha_creacion']
+        read_only_fields = ['user', 'date', 'fecha_creacion']  # Agregar user a los campos de solo lectura
 
     def create(self, validated_data):
         # Obtener el usuario autenticado actualmente
@@ -35,7 +37,13 @@ class UbicacionesSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("No se encontró un crimen que coincida")
 
         validated_data['crimen'] = crime_instance  # Asignar la instancia de Crimenes recuperada al campo 'crimen'
-
+        # Verificar si el usuario ya ha creado una ubicación hoy
+        today = timezone.now().date()
+        try:
+            ubicacion = Ubicaciones.objects.filter(user=user, fecha_creacion__date=today)
+            raise serializers.ValidationError('Ya has creado una ubicación hoy.')
+        except ObjectDoesNotExist:
+            pass
         # Validar la fecha
         date = validated_data.pop('date')
         try:
