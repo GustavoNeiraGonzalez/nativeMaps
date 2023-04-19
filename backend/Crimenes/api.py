@@ -25,4 +25,13 @@ class CrimenesApi(APIView):
         ubicaciones = Crimenes.objects.all()
         serializer = self.serializer_class(ubicaciones, many=True)
         return Response(serializer.data)
+    def delete(self, request, pk):
+        try:
+            crimenes = Crimenes.objects.get(pk=pk)
+        except Crimenes.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
+        crimenes.delete()
+        message = {'message': 'La entrada ha sido eliminada exitosamente.'}
+        return Response(message, status=status.HTTP_200_OK)
 

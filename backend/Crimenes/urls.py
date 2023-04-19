@@ -8,4 +8,6 @@ router.register(r'api/Crimen', CrimenesApi, basename='Crimenes')
 
 urlpatterns = [
     path('api/Crimenes/', CrimenesApi.as_view(), name='ubicaciones-create'),
+    path('api/Crimenes/<int:pk>/', CrimenesApi.as_view(), name='ubicaciones-delete'),
+
 ]
