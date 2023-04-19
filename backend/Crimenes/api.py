@@ -11,7 +11,7 @@ class CrimenesApi(APIView):
     queryset = Crimenes.objects.all()
 
     def check_permissions(self, request):
-        if request.method == 'POST':
+        if request.method == 'POST' or 'DELETE':
             super().check_permissions(request)
 
     def post(self, request):
