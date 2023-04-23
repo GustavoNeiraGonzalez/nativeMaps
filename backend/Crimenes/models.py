@@ -10,8 +10,3 @@ class Crimenes(models.Model):
     def __str__(self):
         return self.crime
     
-    # definir permisos
-    class Meta:
-        permissions = [
-            ("can_create", "Can create"),
-        ]
