@@ -4,7 +4,6 @@ from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from .serializers import CrimenesSerializer
 from .models import Crimenes
-from django.core.exceptions import PermissionDenied
 from .permissions import CanCreateCrime
 
 
@@ -18,15 +17,12 @@ class CrimenesApi(APIView):
             super().check_permissions(request)
 
     def post(self, request):
-        try:
             serializer = self.serializer_class(data=request.data)
             if serializer.is_valid():
                 serializer.save()
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             else:
                 return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        except PermissionDenied:
-            return Response({'error': 'No tienes permiso para crear crímenes.'}, status=status.HTTP_403_FORBIDDEN)
 
     def get(self, request):
         ubicaciones = Crimenes.objects.all()

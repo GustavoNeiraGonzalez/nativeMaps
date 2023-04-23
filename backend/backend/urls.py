@@ -16,7 +16,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path,include
 from rest_framework_simplejwt import views as jwt_views
-from UserCreate.api import userApi, check_token
+from UserCreate.api import userApi, check_token, add_user_permission
 urlpatterns = [
     # ...
     path('admin/', admin.site.urls),
@@ -26,6 +26,7 @@ urlpatterns = [
     path('checkToken', check_token),
     path('',include('Ubicaciones.urls')),
     path('',include('Crimenes.urls')),
+    path('api/addPermission', add_user_permission),
 
     path('api/createUser', userApi.as_view()),
     path('api/token/', jwt_views.TokenObtainPairView.as_view(), name='token_obtain_pair'),

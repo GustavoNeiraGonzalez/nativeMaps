@@ -2,10 +2,13 @@ from rest_framework import permissions, status
 from .serializers import UserSerializer
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from django.contrib.auth.models import User    
-from rest_framework.decorators import api_view
-from rest_framework import status
+from django.contrib.auth.models import User,Permission 
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework_simplejwt.authentication import JWTAuthentication
+from rest_framework.permissions import IsAdminUser
+from django.shortcuts import get_object_or_404
+from django.core.exceptions import ObjectDoesNotExist
+
 
 class userApi(APIView):
     #--Esto es para obtener los nombres de usuario en un get
@@ -43,3 +46,22 @@ def check_token(request):
             print(f'Error: {e}') # Imprime el error si ocurre una excepción
             pass
     return Response(status=status.HTTP_401_UNAUTHORIZED)
+@api_view(['POST'])
+@permission_classes([IsAdminUser])
+def add_user_permission(request):
+    username = request.data.get('username')
+    permission_name = request.data.get('permission')
+    
+    try:
+        user = User.objects.get(username=username)
+    except ObjectDoesNotExist:
+        return Response({'message': f"El usuario {username} no existe."}, status=status.HTTP_404_NOT_FOUND)
+
+    try:
+        permission = Permission.objects.get(codename=permission_name)
+    except ObjectDoesNotExist:
+        return Response({'message': f"El permiso {permission_name} no existe."}, status=status.HTTP_404_NOT_FOUND)
+
+    user.user_permissions.add(permission)
+
+    return Response({'message': f"El permiso {permission_name} ha sido agregado al usuario {username}"})
