@@ -6,3 +6,9 @@ class CanCreateCrime(BasePermission):
     """
     def has_permission(self, request, view):
         return request.user.has_perm('Crimenes.add_crimenes')
+class CanDeleteCrime(BasePermission):
+    """
+    Define si un usuario puede crear un crimen.
+    """
+    def has_permission(self, request, view):
+        return request.user.has_perm('Crimenes.delete_crimenes')
