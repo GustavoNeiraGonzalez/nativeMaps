@@ -6,12 +6,12 @@ import { Switch,Modal,Text, View, Button, TextInput } from 'react-native';
 import MapView, {Circle,Marker,Callout} from 'react-native-maps';
 import * as Location from 'expo-location';
 import haversine from 'haversine';
-import example from '../mapa/ubicaciones'
 import requestLocationPermissions from '../mapa/PermisosUbi'
 import months from '../mapa/months'
 import GetDateUser from '../mapa/GetDateUser'
-
+import axios from 'axios'
 export default function Principal() {
+  
   const [isFiltered, setIsFiltered] = useState(false); // dato para usar la funcion de filtración
   const [modalVisible, setModalVisible] = useState(false);
   const [useCurrentDate, setUseCurrentDate] = useState(false);
@@ -80,12 +80,12 @@ export default function Principal() {
   }
   
 
-
   const [location, setLocation] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
   const [userLocation, setUserLocation] = useState(null);
   const [Circles, setCircles] = useState([]);
   const [MarkPositionBtn, setMarkPositionBtn] = useState(null);
+  const [ubicacionesDjango, setUbicacionesDjango] = useState([]);
 
   function handlePress(latitude, longitude)  {
       setUserLocation({latitude,longitude})
@@ -93,6 +93,15 @@ export default function Principal() {
   useEffect(() => {
     requestLocationPermissions(setErrorMsg, setLocation);
   }, []);
+  axios.get('http://127.0.0.1:8000/api/createUbi/')
+  .then(response => {
+    setUbicacionesDjango(response.data)
+    console.log(response.data); // muestra los datos en la consola
+  })
+  .catch(error => {
+    console.log(error);
+    console.log('mensaje error axios')
+  });
 
   let text = 'Waiting..';
   if (errorMsg) {
@@ -107,10 +116,10 @@ export default function Principal() {
       const groups = [];
       for (let i = 0; i < coordinates.length; i++) {
        // Convertir la fecha de la coordenada a un objeto Date
-        const coordDate = new Date(coordinates[i].fecha.split(' ')[2] + '-' 
-        + coordinates[i].fecha.split(' ')[1].split('/')[1] + '-' + 
-        coordinates[i].fecha.split(' ')[1].split('/')[0] + 'T' + 
-        coordinates[i].fecha.split(' ')[0] + ':00Z');
+        const coordDate = new Date(coordinates[i].date.split(' ')[2] + '-' 
+        + coordinates[i].date.split(' ')[1].split('/')[1] + '-' + 
+        coordinates[i].date.split(' ')[1].split('/')[0] + 'T' + 
+        coordinates[i].date.split(' ')[0] + ':00Z');
       // Obtener la fecha límite, si no hay fecha limite entonces es la fecha actual menos 1 año
         const dateLimit = filterDate ? filterDate : new Date(new Date().setFullYear(new Date().getFullYear() - 1));
       // Verificar si la fecha de la coordenada es posterior a la fecha límite
@@ -172,11 +181,11 @@ export default function Principal() {
         if (group.length > 1) result.fusion = group.length;
 
        // Agregar arrays de fechas y delitos al nuevo objeto
-        result.fecha = [];
-        result.delito = [];
+        result.date = [];
+        result.crimen = [];
         group.forEach(coord => {
-            result.fecha.push(coord.fecha);
-            result.delito.push(coord.delito);
+            result.date.push(coord.date);
+            result.crimen.push(coord.crimen);
         });
         return result;
       });
@@ -191,7 +200,7 @@ export default function Principal() {
   }
 
   const getFilteredCoordsData = () =>{
-    return  groupCoordinates(example, 2000, location.coords,
+    return  groupCoordinates(ubicacionesDjango, 2000, location.coords,
       filterDistance ? filterDistance : null,//filtrar distancia
       selectedCrime !== '---' ? selectedCrime : null,//filtrar crimen
       //filtrar fecha por año o mes o hora
@@ -232,7 +241,7 @@ export default function Principal() {
             )}
           {/*Aqui se muestra las marcas en el mapa pero verifica si isfiltered es true o false, si es
           false se usa unos filtros por defecto */}
-          {(isFiltered ? getFilteredCoordsData() : groupCoordinates(example, 2000, location.coords)).map(
+          {(isFiltered ? getFilteredCoordsData() : groupCoordinates(ubicacionesDjango, 2000, location.coords)).map(
   (circle, index) => (
 
           <React.Fragment key={index}>
@@ -246,8 +255,8 @@ export default function Principal() {
             <Callout>
                 <View style={styles.callout}>
                     <Text style={styles.title}>{circle.fusion ? `Cantidad: ${circle.fusion}`  : 'Cantidad: 1'}</Text>
-                    <Text style={styles.description}>{circle.fusion ? `${formatDatesAndCrimes(circle.fecha, circle.delito)}`
-                    :  `fecha: ${circle.fecha}\n Delitos: ${circle.delito}`}</Text>
+                    <Text style={styles.description}>{circle.fusion ? `${formatDatesAndCrimes(circle.date, circle.crimen)}`
+                    :  `fecha: ${circle.date}\n Delitos: ${circle.crimen}`}</Text>
                   </View>
               </Callout>
           </Marker>
