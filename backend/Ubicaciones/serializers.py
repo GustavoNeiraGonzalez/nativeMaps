@@ -23,11 +23,20 @@ class UbicacionesSerializer(serializers.ModelSerializer):
         # Obtener el usuario autenticado actualmente
         try:
             user, payload = JWTAuthentication().authenticate(self.context['request'])
+            is_admin = user.is_superuser # Verificar si el usuario es un administrador
+
         except:
             raise serializers.ValidationError('No se ha proporcionado una clave de autenticación o es incorrecta.')
-        print(user.id)
-        print('ola')
+                
         validated_data['user'] = user
+
+        if not is_admin:
+            # Verificar si el usuario ya ha creado una ubicación hoy
+            today = timezone.now().date() # Si el usuario no es un administrador
+            ubicacion = Ubicaciones.objects.filter(user=user, fecha_creacion__date=today)
+            if ubicacion.exists():
+                raise serializers.ValidationError('Ya has creado una ubicación hoy.')
+
 
         crime_name = validated_data.pop('crimen')
         try:
@@ -36,11 +45,6 @@ class UbicacionesSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("No se encontró un crimen que coincida")
 
         validated_data['crimen'] = crime_instance  # Asignar la instancia de Crimenes recuperada al campo 'crimen'
-        # Verificar si el usuario ya ha creado una ubicación hoy
-        today = timezone.now().date()
-        ubicacion = Ubicaciones.objects.filter(user=user, fecha_creacion__date=today)
-        if ubicacion.exists():
-            raise serializers.ValidationError('Ya has creado una ubicación hoy.')
       
         # Validar la fecha
         date = validated_data.pop('date')
