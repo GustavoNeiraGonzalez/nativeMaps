@@ -93,7 +93,11 @@ export default function Principal() {
   useEffect(() => {
     requestLocationPermissions(setErrorMsg, setLocation);
   }, []);
-  axios.get('http://127.0.0.1:8000/api/createUbi/')
+
+  axios.defaults.baseURL = 'http://192.168.18.69:8000'; // URL base del servidor Django
+  axios.defaults.headers.common['Access-Control-Allow-Origin'] = '*'; // Establece el encabezado CORS para permitir todas las solicitudes
+
+  axios.get('/api/createUbi/')
   .then(response => {
     setUbicacionesDjango(response.data)
     console.log(response.data); // muestra los datos en la consola
