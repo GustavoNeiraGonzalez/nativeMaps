@@ -9,7 +9,7 @@ import haversine from 'haversine';
 import requestLocationPermissions from '../mapa/PermisosUbi'
 import months from '../mapa/months'
 import GetDateUser from '../mapa/GetDateUser'
-import axios from 'axios'
+import obtenerUbicaciones from '../mapa/ubicaciones'
 export default function Principal() {
   
   const [isFiltered, setIsFiltered] = useState(false); // dato para usar la funcion de filtración
@@ -92,20 +92,10 @@ export default function Principal() {
   };
   useEffect(() => {
     requestLocationPermissions(setErrorMsg, setLocation);
+      obtenerUbicaciones()
+        .then(data =>{setUbicacionesDjango(data)
+        })
   }, []);
-
-  axios.defaults.baseURL = 'http://192.168.18.69:8000'; // URL base del servidor Django
-  axios.defaults.headers.common['Access-Control-Allow-Origin'] = '*'; // Establece el encabezado CORS para permitir todas las solicitudes
-
-  axios.get('/api/createUbi/')
-  .then(response => {
-    setUbicacionesDjango(response.data)
-    console.log(response.data); // muestra los datos en la consola
-  })
-  .catch(error => {
-    console.log(error);
-    console.log('mensaje error axios')
-  });
 
   let text = 'Waiting..';
   if (errorMsg) {
@@ -325,6 +315,7 @@ export default function Principal() {
               value={useCurrentLocationBtn}
               onValueChange={(value) => {
                 setUseCurrentLocationBtn(value);
+                console.log(value)
               }}
             />
           </View>
@@ -354,6 +345,10 @@ export default function Principal() {
               title="Aceptar"
               onPress={() => {
                 // Aquí puedes manejar la selección del usuario
+                selectedCrime
+                selectedHourBtn
+                selectedCrimeBtn
+                useCurrentLocationBtn
                 setModalVisible(false);
               }}
             />
