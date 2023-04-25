@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Picker } from '@react-native-picker/picker';
 import styles from '../mapa/estilos'
 import { StatusBar } from 'expo-status-bar';
@@ -11,6 +11,7 @@ import months from '../mapa/months'
 import GetDateUser from '../mapa/GetDateUser'
 import obtenerUbicaciones from '../mapa/ubicaciones'
 import PostUbicaciones from '../mapa/postMarcas'
+import getJwt from '../Loginjwt/getJwt'
 export default function Principal() {
   
   const [isFiltered, setIsFiltered] = useState(false); // dato para usar la funcion de filtración
@@ -39,6 +40,9 @@ export default function Principal() {
 
   const currentYear = new Date().getFullYear();
   const currentMonth = new Date().getMonth();
+
+  const currentMonthpost = (new Date().getMonth() + 1).toString().padStart(2, '0');
+  const currentDay = new Date().getDate().toString().padStart(2, '0');
   const years = Array.from({length: currentYear - 2000 + 1}, (v, i) => 2000 + i);
   const hours = Array.from({length: 24}, (v, i) => i);
   const [selectedHour, setSelectedHour] = useState(0);
@@ -94,10 +98,16 @@ export default function Principal() {
   };
   useEffect(() => {
     requestLocationPermissions(setErrorMsg, setLocation);
-      obtenerUbicaciones()
-        .then(data =>{setUbicacionesDjango(data)
-        })
+    
   }, []);
+  useEffect(()=>{
+    obtenerUbicaciones()
+      .then(data =>{setUbicacionesDjango(data)
+      })
+      .catch(error => {
+        console.error(error);
+      });
+  },[])
 
   let text = 'Waiting..';
   if (errorMsg) {
@@ -347,17 +357,27 @@ export default function Principal() {
             <Button
               title="Aceptar"
               onPress={() => {
+                newDate = `${selectedHourBtn}/${selectedMinuteBtn} ${currentDay}/${currentMonthpost} ${currentYear}`
+
                 // Aquí puedes manejar la selección del usuario
-                console.log(selectedHourBtn)
-                console.log(selectedMinuteBtn)
+                console.log(selectedCrimeBtn)
+                console.log(newDate)
+                console.log(useCurrentLocationBtnvalue.latitude)
+                console.log(useCurrentLocationBtnvalue.longitude)
+                console.log(MarkPositionBtn.latitude)
+                console.log(MarkPositionBtn.longitude)
+                console.log(useCurrentLocationBtn)
+
                 //HAY QUE CONVERTIR LA HORA MINUTO Y FECHA A UN FORMATO hh:mm dd/mm AAAA
                 if(useCurrentLocationBtn === true){
-                  PostUbicaciones(selectedCrimeBtn, date,
+                  console.log('xd1')
+                  PostUbicaciones(selectedCrimeBtn, newDate,
                      useCurrentLocationBtnvalue.latitude,useCurrentLocationBtnvalue.longitude
                      )
                   //aqui codigo usando localización actual del usuario
                 }else{
-                  PostUbicaciones(selectedCrimeBtn, date,
+                  console.log('xd2')
+                  PostUbicaciones(selectedCrimeBtn, newDate,
                     MarkPositionBtn.latitude,MarkPositionBtn.longitude
                     )
                   //aqui usando MarkPositionBtn que es la posicion puesta en el marcador
