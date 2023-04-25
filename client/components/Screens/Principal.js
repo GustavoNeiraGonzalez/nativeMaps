@@ -357,7 +357,7 @@ export default function Principal() {
             <Button
               title="Aceptar"
               onPress={() => {
-                newDate = `${selectedHourBtn}/${selectedMinuteBtn} ${currentDay}/${currentMonthpost} ${currentYear}`
+                newDate = `${selectedHourBtn.toString().padStart(2, '0')}:${selectedMinuteBtn.toString().padStart(2, '0')} ${currentDay}/${currentMonthpost} ${currentYear}`
 
                 // Aquí puedes manejar la selección del usuario
                 console.log(selectedCrimeBtn)

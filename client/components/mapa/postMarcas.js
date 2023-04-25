@@ -24,7 +24,7 @@ const PostUbicaciones = async (crimen, newDate, latitude, longitude) => {
         return response.data;
     } catch (error) {
         if (error.response) {
-            console.log('malo1')
+            console.log(newDate)
             console.log(error.response.data);
           } else {
             console.log('malo2')
