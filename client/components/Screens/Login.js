@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import {Button, View, Text, TextInput, TouchableOpacity } from 'react-native';
 import styles from '../LoginEstilos/Login.module';
-
+import PostLogin from '../Loginjwt/login'
 export default function Login() {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
@@ -62,18 +62,17 @@ export default function Login() {
         }
     
         // Enviar solicitud al servidor
-        axios.post('<URL>', {
-            username: username,
-            password: password
-        })
-        .then(response => {
-            setPassword('');
-            setUsername('');
-            // Manejar la respuesta del servidor
-        })
-        .catch(error => {
-            // Manejar el error
-        });
+        PostLogin( username, password)
+            .then(response => {
+                setPassword('');
+                setUsername('');
+                console.log(response)
+                // Manejar la respuesta del servidor
+            })
+            .catch(error => {
+                console.log(error)
+                // Manejar el error
+            });
     }
 
   return (

@@ -10,12 +10,14 @@ import requestLocationPermissions from '../mapa/PermisosUbi'
 import months from '../mapa/months'
 import GetDateUser from '../mapa/GetDateUser'
 import obtenerUbicaciones from '../mapa/ubicaciones'
+import PostUbicaciones from '../mapa/postMarcas'
 export default function Principal() {
   
   const [isFiltered, setIsFiltered] = useState(false); // dato para usar la funcion de filtración
   const [modalVisible, setModalVisible] = useState(false);
   const [useCurrentDate, setUseCurrentDate] = useState(false);
   const [useCurrentLocationBtn, setUseCurrentLocationBtn] = useState(false);
+  const [useCurrentLocationBtnvalue, setUseCurrentLocationBtnvalue] = useState(false);
 
   const crimes = ['---','Asalto', 'Hurto'];
   const [selectedCrime, setSelectedCrime] = useState(crimes[0]);
@@ -314,8 +316,9 @@ export default function Principal() {
             <Switch
               value={useCurrentLocationBtn}
               onValueChange={(value) => {
-                setUseCurrentLocationBtn(value);
-                console.log(value)
+                setUseCurrentLocationBtn(value)
+                setUseCurrentLocationBtnvalue({ latitude: location.coords.latitude,
+                  longitude: location.coords.longitude});
               }}
             />
           </View>
@@ -345,10 +348,21 @@ export default function Principal() {
               title="Aceptar"
               onPress={() => {
                 // Aquí puedes manejar la selección del usuario
-                selectedCrime
-                selectedHourBtn
-                selectedCrimeBtn
-                useCurrentLocationBtn
+                console.log(selectedHourBtn)
+                console.log(selectedMinuteBtn)
+                //HAY QUE CONVERTIR LA HORA MINUTO Y FECHA A UN FORMATO hh:mm dd/mm AAAA
+                if(useCurrentLocationBtn === true){
+                  PostUbicaciones(selectedCrimeBtn, date,
+                     useCurrentLocationBtnvalue.latitude,useCurrentLocationBtnvalue.longitude
+                     )
+                  //aqui codigo usando localización actual del usuario
+                }else{
+                  PostUbicaciones(selectedCrimeBtn, date,
+                    MarkPositionBtn.latitude,MarkPositionBtn.longitude
+                    )
+                  //aqui usando MarkPositionBtn que es la posicion puesta en el marcador
+                  //verificar si es null para indicar que debe poner un marcador en el mapa
+                }
                 setModalVisible(false);
               }}
             />
