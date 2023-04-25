@@ -12,6 +12,7 @@ import GetDateUser from '../mapa/GetDateUser'
 import obtenerUbicaciones from '../mapa/ubicaciones'
 import PostUbicaciones from '../mapa/postMarcas'
 import getJwt from '../Loginjwt/getJwt'
+import obtenerCrimenes from '../mapa/crimenes'
 export default function Principal() {
   
   const [isFiltered, setIsFiltered] = useState(false); // dato para usar la funcion de filtración
@@ -20,9 +21,9 @@ export default function Principal() {
   const [useCurrentLocationBtn, setUseCurrentLocationBtn] = useState(false);
   const [useCurrentLocationBtnvalue, setUseCurrentLocationBtnvalue] = useState(false);
 
-  const crimes = ['---','Asalto', 'Hurto'];
-  const [selectedCrime, setSelectedCrime] = useState(crimes[0]);
-  const [selectedCrimeBtn, setSelectedCrimeBtn] = useState(crimes[0]);
+  const [crimes,setCrimes] = useState([])
+  const [selectedCrime, setSelectedCrime] = useState(crimes ? crimes[0] : '---');
+  const [selectedCrimeBtn, setSelectedCrimeBtn] = useState(crimes ? crimes[0] : '---');
   const currenttHour = new Date().getHours();
   const currenttminute = new Date().getMinutes();
   const [selectedHourBtn, setSelectedHourBtn] = useState(currenttHour);
@@ -107,6 +108,15 @@ export default function Principal() {
       .catch(error => {
         console.error(error);
       });
+  },[])
+  useEffect(()=>{
+    console.log("llamando a funcion crimenes")
+    obtenerCrimenes()
+      .then(response=>{
+        setCrimes(response)
+      }).catch((error) =>{
+        console.log(error)
+      })
   },[])
 
   let text = 'Waiting..';
@@ -358,25 +368,13 @@ export default function Principal() {
               title="Aceptar"
               onPress={() => {
                 newDate = `${selectedHourBtn.toString().padStart(2, '0')}:${selectedMinuteBtn.toString().padStart(2, '0')} ${currentDay}/${currentMonthpost} ${currentYear}`
-
-                // Aquí puedes manejar la selección del usuario
-                console.log(selectedCrimeBtn)
-                console.log(newDate)
-                console.log(useCurrentLocationBtnvalue.latitude)
-                console.log(useCurrentLocationBtnvalue.longitude)
-                console.log(MarkPositionBtn.latitude)
-                console.log(MarkPositionBtn.longitude)
-                console.log(useCurrentLocationBtn)
-
                 //HAY QUE CONVERTIR LA HORA MINUTO Y FECHA A UN FORMATO hh:mm dd/mm AAAA
                 if(useCurrentLocationBtn === true){
-                  console.log('xd1')
                   PostUbicaciones(selectedCrimeBtn, newDate,
                      useCurrentLocationBtnvalue.latitude,useCurrentLocationBtnvalue.longitude
                      )
                   //aqui codigo usando localización actual del usuario
                 }else{
-                  console.log('xd2')
                   PostUbicaciones(selectedCrimeBtn, newDate,
                     MarkPositionBtn.latitude,MarkPositionBtn.longitude
                     )
