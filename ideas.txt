@@ -1,8 +1,3 @@
-filtrar por hora dia mes año, 
-notificación si alguien marca una zona de peligro de manera cercana a tu ubicación,
-filtrar por tipo de delito, asalto hurto etc
-
-filtrar por hora pero entonces es el mismo dia actual por defecto
-filtrar por dia pero entonces es el mismo mes actual por defecto
-filtrar por mes pero entonces es el mismo añ actual por defecto
-fitlrar por año pero no puede superar el año actual
+cosas por hacer:
+alertas
+no ver crearUsuario al estar logeado

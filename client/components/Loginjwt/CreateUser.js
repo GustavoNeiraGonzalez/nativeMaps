@@ -1,5 +1,6 @@
 import axios from "axios";
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Alert } from 'react-native';
 
 axios.defaults.baseURL = 'http://192.168.18.69:8000';
 axios.defaults.headers.common['Access-Control-Allow-Origin'] = '*';
@@ -16,10 +17,11 @@ const CreateUserr = async (username,email,password) => {
     return response.data;
   } catch (error) {
     if (error.response) {
-        console.log(error.response.data);
+        Alert.alert('error', error.response.data);
       } else {
-        console.log(error.message);
+        Alert.alert('error', error.message);
       }
+    
   }
 }
 

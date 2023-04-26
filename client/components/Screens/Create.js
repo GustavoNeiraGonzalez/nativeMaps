@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import {Button, View, Text, TextInput, TouchableOpacity } from 'react-native';
 import styles from '../LoginEstilos/Create.module'
-import axios from 'axios';
+import { Alert } from 'react-native';
 import CreateUserr from '../Loginjwt/CreateUser'
 export default function Create() {
     const [username, setUsername] = useState('');
@@ -97,8 +97,12 @@ export default function Create() {
            // Manejar la respuesta del servidor
        })
        .catch(error => {
-           console.log(error)
-           // Manejar el error
+        if (error.response) {
+            Alert.alert('error', error.response.data);
+          } else {
+            Alert.alert('error', error.message);
+          }
+        
        });
     }
     

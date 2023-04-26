@@ -1,6 +1,7 @@
 import axios from "axios";
 import getJwt from "../Loginjwt/getJwt";
-import { useState } from "react";
+import { Alert } from 'react-native';
+
 axios.defaults.baseURL = 'http://192.168.18.69:8000';
 axios.defaults.headers.common['Access-Control-Allow-Origin'] = '*';
 
@@ -9,7 +10,7 @@ const PostUbicaciones = async (crimen, newDate, latitude, longitude) => {
     await getJwt().then(tokenn => { // Usar .then para obtener el token
       token = tokenn;
     }).catch(error => {
-      console.log(error);
+        console.log(error)
     });
 
     const tokenHeader = {headers:{ Authorization: token }};
@@ -23,9 +24,9 @@ const PostUbicaciones = async (crimen, newDate, latitude, longitude) => {
         return response.data;
     } catch (error) {
         if (error.response) {
-            console.log(error.response.data);
+            Alert.alert('error', error.response.data);
           } else {
-            console.log(error.message);
+            Alert.alert('error', error.message);
           }
     }
 }

@@ -12,6 +12,8 @@ import GetDateUser from '../mapa/GetDateUser'
 import obtenerUbicaciones from '../mapa/ubicaciones'
 import PostUbicaciones from '../mapa/postMarcas'
 import obtenerCrimenes from '../mapa/crimenes'
+import { Alert } from 'react-native';
+
 export default function Principal() {
   
   const [isFiltered, setIsFiltered] = useState(false); // dato para usar la funcion de filtración
@@ -97,8 +99,15 @@ export default function Principal() {
       setUserLocation({latitude,longitude})
   };
   useEffect(() => {
-    requestLocationPermissions(setErrorMsg, setLocation);
-    
+    const getLocationAsync = async () => {
+      try {
+        await requestLocationPermissions(setErrorMsg, setLocation);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+  
+    getLocationAsync();    
   }, []);
   useEffect(()=>{
     obtenerUbicaciones()
@@ -386,11 +395,18 @@ export default function Principal() {
                   setModalVisible(false);
                   obtenerUbicaciones()
                     .then(data =>{setUbicacionesDjango(data)})
-                    .catch(error => {console.error(error);});
+                    .catch(error => {if (error.response) {
+                      Alert.alert('error', error.response.data);
+                    } else {
+                      Alert.alert('error', error.message);
+                    }});
                 } catch (error) {
-                  console.error(error);
+                  if (error.response) {
+                    Alert.alert('error', error.response.data);
+                  } else {
+                    Alert.alert('error', error.message);
+                  };
                   // Aquí puedes mostrar un mensaje de error al usuario, por ejemplo:
-                  Alert.alert('Error', 'No se pudo completar la operación. Inténtalo de nuevo más tarde.');
                 }
               }}
             />

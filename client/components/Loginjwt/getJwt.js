@@ -1,4 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Alert } from 'react-native';
 
 const getJwt = async () => {
   try {
@@ -6,7 +7,12 @@ const getJwt = async () => {
     console.log(token)
     return token;
   } catch (error) {
-    console.log(error);
-  }
+    if (error.response) {
+        Alert.alert('error', error.response.data);
+      } else {
+        Alert.alert('error', error.message);
+      }
+    }
+    
 };
 export default getJwt;
