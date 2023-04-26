@@ -113,8 +113,8 @@ export default function Principal() {
       .then(response=>{
         const crimesArray = response.map((crimeObj) => crimeObj.crime);
         setCrimes(crimesArray)
-        setSelectedCrime(response[0]);
-        setSelectedCrimeBtn(response[0]);
+        setSelectedCrime(crimesArray[0]);
+        setSelectedCrimeBtn(crimesArray[0]);
       }).catch((error) =>{
         console.log(error)
       })
@@ -368,22 +368,30 @@ export default function Principal() {
           <View style={styles.modalButtons}>
             <Button
               title="Aceptar"
-              onPress={() => {
-                newDate = `${selectedHourBtn.toString().padStart(2, '0')}:${selectedMinuteBtn.toString().padStart(2, '0')} ${currentDay}/${currentMonthpost} ${currentYear}`
-                //HAY QUE CONVERTIR LA HORA MINUTO Y FECHA A UN FORMATO hh:mm dd/mm AAAA
-                if(useCurrentLocationBtn === true){
-                  PostUbicaciones(selectedCrimeBtn, newDate,
-                     useCurrentLocationBtnvalue.latitude,useCurrentLocationBtnvalue.longitude
-                     )
-                  //aqui codigo usando localización actual del usuario
-                }else{
-                  PostUbicaciones(selectedCrimeBtn, newDate,
-                    MarkPositionBtn.latitude,MarkPositionBtn.longitude
+              onPress={async () => {
+                try {
+                  newDate = `${selectedHourBtn.toString().padStart(2, '0')}:${selectedMinuteBtn.toString().padStart(2, '0')} ${currentDay}/${currentMonthpost} ${currentYear}`
+                  if(useCurrentLocationBtn === true){
+                    await PostUbicaciones(selectedCrimeBtn, newDate,
+                      useCurrentLocationBtnvalue.latitude,useCurrentLocationBtnvalue.longitude
                     )
-                  //aqui usando MarkPositionBtn que es la posicion puesta en el marcador
-                  //verificar si es null para indicar que debe poner un marcador en el mapa
+                    //aqui codigo usando localización actual del usuario
+                  } else {
+                    await PostUbicaciones(selectedCrimeBtn, newDate,
+                      MarkPositionBtn.latitude,MarkPositionBtn.longitude
+                    )
+                    //aqui usando MarkPositionBtn que es la posicion puesta en el marcador
+                    //verificar si es null para indicar que debe poner un marcador en el mapa
+                  }
+                  setModalVisible(false);
+                  obtenerUbicaciones()
+                    .then(data =>{setUbicacionesDjango(data)})
+                    .catch(error => {console.error(error);});
+                } catch (error) {
+                  console.error(error);
+                  // Aquí puedes mostrar un mensaje de error al usuario, por ejemplo:
+                  Alert.alert('Error', 'No se pudo completar la operación. Inténtalo de nuevo más tarde.');
                 }
-                setModalVisible(false);
               }}
             />
             <Button
