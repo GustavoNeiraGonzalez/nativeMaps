@@ -110,11 +110,10 @@ export default function Principal() {
       });
   },[])
   useEffect(()=>{
-    console.log("llamando a funcion crimenes")
     obtenerCrimenes()
       .then(response=>{
-        console.log("Respuesta de la API recibida correctamente:", response);
-        setCrimes(response)
+        const crimesArray = response.map((crimeObj) => crimeObj.crime);
+        setCrimes(crimesArray)
         setSelectedCrime(response[0]);
         setSelectedCrimeBtn(response[0]);
       }).catch((error) =>{
@@ -315,12 +314,11 @@ export default function Principal() {
             <Picker
             selectedValue={selectedCrimeBtn } style={styles.selectorPick}
             onValueChange={(itemValue) => {setSelectedCrimeBtn(itemValue)}}>
-            {crimes.map((crime) => {
-            console.log("Generando JSX para el crimen:", crime);
+            {crimes && (crimes.map((crime) => {
             return (
                 <Picker.Item key={crime} label={crime} value={crime} />
               );
-            })}
+            }))}
         </Picker>
 
           <View style={styles.modalSwitch}>
@@ -453,12 +451,11 @@ export default function Principal() {
             onValueChange={(itemValue) => {
               setSelectedCrime(itemValue)}}
           >
-            {crimes.map((crime) => {
-              console.log("Generando JSX para el crimen:", crime);
+            {crimes &&(crimes.map((crime) => {
               return (
                   <Picker.Item key={crime} label={crime} value={crime} />
                 );
-            })}
+            }))}
           </Picker>
         </View>
         <View styles={styles.selectorColumn}>
