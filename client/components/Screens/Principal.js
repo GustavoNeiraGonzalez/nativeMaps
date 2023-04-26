@@ -11,7 +11,6 @@ import months from '../mapa/months'
 import GetDateUser from '../mapa/GetDateUser'
 import obtenerUbicaciones from '../mapa/ubicaciones'
 import PostUbicaciones from '../mapa/postMarcas'
-import getJwt from '../Loginjwt/getJwt'
 import obtenerCrimenes from '../mapa/crimenes'
 export default function Principal() {
   

@@ -2,6 +2,9 @@ import React, { useState } from 'react';
 import {Button, View, Text, TextInput, TouchableOpacity } from 'react-native';
 import styles from '../LoginEstilos/Login.module';
 import PostLogin from '../Loginjwt/login'
+import Logout from '../Loginjwt/BorrarLogin'
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 export default function Login() {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
@@ -107,6 +110,12 @@ export default function Login() {
               onPress={() => {
                 Login()
               }}
+            />
+        <Button
+              title="Unlogin"
+                onPress={() => {
+                    Logout()
+                }}
             />
     </View>
   );
