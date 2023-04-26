@@ -22,8 +22,8 @@ export default function Principal() {
   const [useCurrentLocationBtnvalue, setUseCurrentLocationBtnvalue] = useState(false);
 
   const [crimes,setCrimes] = useState([])
-  const [selectedCrime, setSelectedCrime] = useState(crimes ? crimes[0] : '---');
-  const [selectedCrimeBtn, setSelectedCrimeBtn] = useState(crimes ? crimes[0] : '---');
+  const [selectedCrime, setSelectedCrime] = useState('---');
+  const [selectedCrimeBtn, setSelectedCrimeBtn] = useState('---');
   const currenttHour = new Date().getHours();
   const currenttminute = new Date().getMinutes();
   const [selectedHourBtn, setSelectedHourBtn] = useState(currenttHour);
@@ -113,7 +113,10 @@ export default function Principal() {
     console.log("llamando a funcion crimenes")
     obtenerCrimenes()
       .then(response=>{
+        console.log("Respuesta de la API recibida correctamente:", response);
         setCrimes(response)
+        setSelectedCrime(response[0]);
+        setSelectedCrimeBtn(response[0]);
       }).catch((error) =>{
         console.log(error)
       })
@@ -312,10 +315,12 @@ export default function Principal() {
             <Picker
             selectedValue={selectedCrimeBtn } style={styles.selectorPick}
             onValueChange={(itemValue) => {setSelectedCrimeBtn(itemValue)}}>
-            {crimes.map((crime) => (
-
-            <Picker.Item key={crime} label={crime} value={crime} />
-            ))}
+            {crimes.map((crime) => {
+            console.log("Generando JSX para el crimen:", crime);
+            return (
+                <Picker.Item key={crime} label={crime} value={crime} />
+              );
+            })}
         </Picker>
 
           <View style={styles.modalSwitch}>
@@ -448,9 +453,12 @@ export default function Principal() {
             onValueChange={(itemValue) => {
               setSelectedCrime(itemValue)}}
           >
-            {crimes.map((crime) => (
-              <Picker.Item key={crime} label={crime} value={crime} />
-            ))}
+            {crimes.map((crime) => {
+              console.log("Generando JSX para el crimen:", crime);
+              return (
+                  <Picker.Item key={crime} label={crime} value={crime} />
+                );
+            })}
           </Picker>
         </View>
         <View styles={styles.selectorColumn}>
