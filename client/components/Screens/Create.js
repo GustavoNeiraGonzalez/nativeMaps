@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import {Button, View, Text, TextInput, TouchableOpacity } from 'react-native';
 import styles from '../LoginEstilos/Create.module'
 import axios from 'axios';
+import CreateUserr from '../Loginjwt/CreateUser'
 export default function Create() {
     const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
@@ -34,16 +35,20 @@ export default function Create() {
         }
         else if (!/[a-z]/.test(text)) {
             setPasswordError('La contraseña debe tener al menos una letra minuscula');
+        }else {
+            setPasswordError('');
         }
     }
     const handleUsernameChange = (text) => {
         setUsername(text);
 
         if (text.length < 4) {
-            setUsernameError('El nombre de usuario debe tener al menos 4 caracteres');
+            setUsernameError('El nombre de usuario tiene al menos 4 caracteres');
         }
         else if (!/^[a-zA-Z0-9]+$/.test(text)) {
-            setUsernameError('El nombre de usuario solo puede contener letras y números');
+            setUsernameError('El nombre de usuario tiene contener letras y números');
+        }else{
+            setUsernameError('')
         }
     }
 
@@ -82,21 +87,19 @@ export default function Create() {
             return;
         }
     
-        // Enviar solicitud al servidor
-        axios.post('<URL>', {
-            username: username,
-            email: email,
-            password: password
-        })
-        .then(response => {
-            setPassword('');
-            setUsername('');
-            setEmail('');
-            // Manejar la respuesta del servidor
-        })
-        .catch(error => {
-            // Manejar el error
-        });
+       // Enviar solicitud al servidor
+       CreateUserr( username,email,password)
+       .then(response => {
+           setPassword('');
+           setUsername('');
+           setEmail('')
+           console.log(response)
+           // Manejar la respuesta del servidor
+       })
+       .catch(error => {
+           console.log(error)
+           // Manejar el error
+       });
     }
     
 
