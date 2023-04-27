@@ -120,7 +120,6 @@ export default function Login() {
                 onPress={() => {
                     Logout().then(response =>{
                         Alert.alert('Alerta', response);
-
                         })
                         .catch(error =>(console.log(error)))
                 }}
