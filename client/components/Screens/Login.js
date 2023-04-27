@@ -118,7 +118,10 @@ export default function Login() {
         <Button
               title="Unlogin"
                 onPress={() => {
-                    Logout().then(response =>(console.log(response)))
+                    Logout().then(response =>{
+                        Alert.alert('Alerta', response);
+
+                        })
                         .catch(error =>(console.log(error)))
                 }}
             />
