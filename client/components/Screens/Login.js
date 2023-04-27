@@ -118,7 +118,8 @@ export default function Login() {
         <Button
               title="Unlogin"
                 onPress={() => {
-                    Logout()
+                    Logout().then(response =>(console.log(response)))
+                        .catch(error =>(console.log(error)))
                 }}
             />
     </View>

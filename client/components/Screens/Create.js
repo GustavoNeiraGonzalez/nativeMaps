@@ -3,11 +3,8 @@ import {Button, View, Text, TextInput, TouchableOpacity } from 'react-native';
 import styles from '../LoginEstilos/Create.module'
 import { Alert } from 'react-native';
 import CreateUserr from '../Loginjwt/CreateUser'
-import { AsyncStorage } from 'react-native';
-import { AuthContext } from "../AuthContext/AuthContext";
 
 export default function Create() {
-    const { isAuthenticated } = useContext(AuthContext);
 
   
 
@@ -116,11 +113,9 @@ export default function Create() {
     
 
   return (
-    <View>
-      {isAuthenticated && (
 
     <View style={styles.container}>
-        
+
       <Text style={styles.title}>Crear usuario</Text>
       <Text style={{color: 'wheat'}}>Usuario</Text>
       <TextInput
@@ -167,9 +162,6 @@ export default function Create() {
               }}
             />    
         </View>
-      )}
-      <Text>No deberias ver esto</Text>
-    </View>
 
   );
 }
