@@ -10,6 +10,8 @@ const LoginStack = () => {
   return (
       
     <Stack.Navigator>
+          <Stack.Screen name="Createe" component={Create}   options={{ headerShown: false , headerTitleStyle: { color: "wheat" },
+          headerStyle: { backgroundColor: "#292929" },}}/>
       <Stack.Screen name="Loginn" component={Login}   options={{ headerShown: false , headerTitleStyle: { color: "wheat" },
     headerStyle: { backgroundColor: "#292929" },}}/>
       <Stack.Screen name="Somoss" component={Somos}   options={{ headerShown: false , headerTitleStyle: { color: "wheat" },
