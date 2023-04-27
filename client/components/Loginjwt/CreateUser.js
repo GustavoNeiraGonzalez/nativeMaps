@@ -16,12 +16,14 @@ const CreateUserr = async (username,email,password) => {
     await AsyncStorage.setItem('jwt', token);
     return response.data;
   } catch (error) {
-    if (error.response) {
-        Alert.alert('error', error.response.data);
-      } else {
-        Alert.alert('error', error.message);
-      }
-    
+    console.log(error);
+    let errorMessage = 'Ha ocurrido un error desconocido se recomienda Verificar el formato de correo';
+    let errorDetails = null;
+    if (error.response && error.response.data) {
+      errorMessage = error.response.data.message || 'Ha ocurrido un error desconocido se recomienda Verificar el formato de correo';
+      errorDetails = error.response.data.details || null;
+    }
+    throw new Error(errorMessage, errorDetails);
   }
 }
 

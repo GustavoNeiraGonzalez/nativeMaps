@@ -64,18 +64,21 @@ export default function Login() {
             return;
         }
     
-        // Enviar solicitud al servidor
-        PostLogin( username, password)
-            .then(response => {
-                setPassword('');
-                setUsername('');
-                console.log(response)
-                // Manejar la respuesta del servidor
-            })
-            .catch(error => {
-                console.log(error)
-                // Manejar el error
-            });
+       // Llamada a la función PostLogin
+        PostLogin(username, password)
+        .then(response => {
+            setPassword('')
+            setUsername('')
+            // Si la respuesta es satisfactoria, muestra una alerta de éxito
+            Alert.alert('Éxito', '¡Inicio de sesión exitoso!');
+        })
+        .catch(error => {
+        // Si la respuesta es un error, muestra una alerta de error con la descripción del error
+        console.log(error)
+        Alert.alert('Error', error.message);
+        });
+
+        
     }
 
   return (
@@ -108,7 +111,8 @@ export default function Login() {
       <Button
               title="Aceptar"
               onPress={() => {
-                Login()
+                    Login()
+              
               }}
             />
         <Button

@@ -93,17 +93,16 @@ export default function Create() {
            setPassword('');
            setUsername('');
            setEmail('')
-           console.log(response)
-           // Manejar la respuesta del servidor
-       })
-       .catch(error => {
-        if (error.response) {
-            Alert.alert('error', error.response.data);
-          } else {
-            Alert.alert('error', error.message);
-          }
-        
-       });
+            // Si la respuesta es satisfactoria, muestra una alerta de éxito
+            Alert.alert('Éxito', '¡Creación de cuenta exitosa!');
+        })
+        .catch(error => {
+        // Si la respuesta es un error, muestra una alerta de error con la descripción del error
+        console.log(error)
+        Alert.alert('Error', error.message);
+        });
+
+
     }
     
 

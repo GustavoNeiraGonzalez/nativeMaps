@@ -99,6 +99,8 @@ export default function Principal() {
       setUserLocation({latitude,longitude})
   };
   useEffect(() => {
+    //aqui se obtiene la ubicacion, al hacerlo de manera async
+    //se evita que no carge la ubicacion en la primera ejecución de app
     const getLocationAsync = async () => {
       try {
         await requestLocationPermissions(setErrorMsg, setLocation);
@@ -106,7 +108,7 @@ export default function Principal() {
         console.log(error);
       }
     };
-  
+
     getLocationAsync();    
   }, []);
   useEffect(()=>{
@@ -114,7 +116,12 @@ export default function Principal() {
       .then(data =>{setUbicacionesDjango(data)
       })
       .catch(error => {
-        console.error(error);
+        if (error.response) {
+          Alert.alert('error', error.response.data);
+        } else {
+          Alert.alert('error', error.message);
+        }
+      
       });
   },[])
   useEffect(()=>{
@@ -125,7 +132,12 @@ export default function Principal() {
         setSelectedCrime(crimesArray[0]);
         setSelectedCrimeBtn(crimesArray[0]);
       }).catch((error) =>{
-        console.log(error)
+        if (error.response) {
+          Alert.alert('error', error.response.data);
+        } else {
+          Alert.alert('error', error.message);
+        }
+      
       })
   },[])
 
@@ -404,7 +416,11 @@ export default function Principal() {
                   if (error.response) {
                     Alert.alert('error', error.response.data);
                   } else {
-                    Alert.alert('error', error.message);
+                    if (error.message==="Cannot read property 'latitude' of null"||error.message==="Cannot read property 'longitude' of null"){
+                      Alert.alert('error', "Se debe indicar si usar la posición actual o si nó, marcar el mapa");
+                    }else{
+
+                    }
                   };
                   // Aquí puedes mostrar un mensaje de error al usuario, por ejemplo:
                 }

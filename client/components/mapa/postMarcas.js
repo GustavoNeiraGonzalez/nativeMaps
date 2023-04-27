@@ -1,6 +1,5 @@
 import axios from "axios";
 import getJwt from "../Loginjwt/getJwt";
-import { Alert } from 'react-native';
 
 axios.defaults.baseURL = 'http://192.168.18.69:8000';
 axios.defaults.headers.common['Access-Control-Allow-Origin'] = '*';
@@ -24,9 +23,9 @@ const PostUbicaciones = async (crimen, newDate, latitude, longitude) => {
         return response.data;
     } catch (error) {
         if (error.response) {
-            Alert.alert('error', error.response.data);
+            console.log(error.response.data);
           } else {
-            Alert.alert('error', error.message);
+            console.log(error.message);
           }
     }
 }
