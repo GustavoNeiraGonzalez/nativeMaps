@@ -353,7 +353,7 @@ export default function Principal() {
             />
           </View>
           <View style={styles.modalSwitch}>
-            <Text style={styles.modalText}>Usar ubicación actual:</Text>
+             <Text style={styles.modalText}>Usar ubicación actual:</Text>
             <Text style={styles.modalSubText}>(Al no seleccionar se usará la marca creada</Text>
             <Text style={styles.modalSubText}> en el mapa)</Text>
             <Switch

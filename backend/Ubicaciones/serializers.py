@@ -21,16 +21,18 @@ class UbicacionesSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         # Obtener el usuario autenticado actualmente
-        try:
-            user, payload = JWTAuthentication().authenticate(self.context['request'])
-            is_admin = user.is_superuser # Verificar si el usuario es un administrador
+        user = None
+        if 'request' in self.context:
+            try:
+                user, payload = JWTAuthentication().authenticate(self.context['request'])
+                is_admin = user.is_superuser # Verificar si el usuario es un administrador
 
-        except:
-            raise serializers.ValidationError('No se ha proporcionado una clave de autenticación o es incorrecta.')
+            except:
+                raise serializers.ValidationError('No se ha proporcionado una clave de autenticación o es incorrecta.')
                 
         validated_data['user'] = user
 
-        if not is_admin:
+        if user and not is_admin:
             # Verificar si el usuario ya ha creado una ubicación hoy
             today = timezone.now().date() # Si el usuario no es un administrador
             ubicacion = Ubicaciones.objects.filter(user=user, fecha_creacion__date=today)

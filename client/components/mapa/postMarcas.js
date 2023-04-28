@@ -27,7 +27,12 @@ const PostUbicaciones = async (crimen, newDate, latitude, longitude) => {
             throw new Error("Se necesita iniciar Sesión para hacer esta acción");
 
           }else{
-            throw new Error(error.response.data.detail);
+            if (error.response.data.detail) {
+              throw new Error(error.response.data.detail);
+
+            }else{
+            throw new Error(error.response.data);
+            }
           }
           } else {
             console.log(error.message)
