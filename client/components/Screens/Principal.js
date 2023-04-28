@@ -396,11 +396,13 @@ export default function Principal() {
                     await PostUbicaciones(selectedCrimeBtn, newDate,
                       useCurrentLocationBtnvalue.latitude,useCurrentLocationBtnvalue.longitude
                     )
+                    Alert.alert("Correcto","ubicación creada exitosamente")
                     //aqui codigo usando localización actual del usuario
                   } else {
                     await PostUbicaciones(selectedCrimeBtn, newDate,
                       MarkPositionBtn.latitude,MarkPositionBtn.longitude
                     )
+                    Alert.alert("Correcto","ubicación creada exitosamente")
                     //aqui usando MarkPositionBtn que es la posicion puesta en el marcador
                     //verificar si es null para indicar que debe poner un marcador en el mapa
                   }
@@ -413,12 +415,14 @@ export default function Principal() {
                       Alert.alert('error', error.message);
                     }});
                 } catch (error) {
+
                   if (error.response) {
                     Alert.alert('error', error.response.data);
                   } else {
                     if (error.message==="Cannot read property 'latitude' of null"||error.message==="Cannot read property 'longitude' of null"){
                       Alert.alert('error', "Se debe indicar si usar la posición actual o si nó, marcar el mapa");
                     }else{
+                      Alert.alert('error', error.message);
 
                     }
                   };

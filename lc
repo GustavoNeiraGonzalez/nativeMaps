@@ -1,0 +1,5 @@
+[33mcommit 5b354d4d3d67c8cb0ec73147f7462df82cf5f4b4[m[33m ([m[1;36mHEAD -> [m[1;32mmaster[m[33m, [m[1;31morigin/master[m[33m)[m
+Author: GustavoNeiraGonzalez <gustavoeduardoneiragonzalez@gmail.com>
+Date:   Thu Apr 27 01:35:09 2023 -0400
+
+    agregado quitar crear usuario si estas logeado, Problema al logearse no se actualiza esta opcion, al reiniciar se ve si estas o no logeado

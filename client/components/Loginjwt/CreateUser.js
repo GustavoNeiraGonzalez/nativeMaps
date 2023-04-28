@@ -1,6 +1,5 @@
 import axios from "axios";
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Alert } from 'react-native';
 
 axios.defaults.baseURL = 'http://192.168.18.69:8000';
 axios.defaults.headers.common['Access-Control-Allow-Origin'] = '*';

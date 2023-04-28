@@ -1,11 +1,10 @@
-import React,{ useContext, useEffect, useState } from "react";
+import React,{useEffect, useState } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import PrincipalStack from "./components/Stacks/PrincipalStack";
 import SomosStack from "./components/Stacks/SomosStack";
 import LoginStack from "./components/Stacks/LoginStack";
 import CreateStack from "./components/Stacks/CreateStack";
-import { AuthContext } from "./components/AuthContext/AuthContext";
 import prueba from './components/AuthContext/prueba'
 const Tab = createBottomTabNavigator();
 
@@ -23,7 +22,6 @@ export default function App() {
     ejemplo()
   }, [])
   useEffect(() => {
-    console.log(user)
   }, [user])
   
   return (

@@ -5,3 +5,5 @@ C:\Users\Usuario\Desktop\Portafolio\proyectoApp\myenv\Scripts\activate.bat
 python manage.py runserver 192.168.18.69:8000
 al usar este runserver se usará el pc como host o algo asi, por lo que ahora con el celular si puedes 
 hacer peticiones, porque no se podia antes por ser un dispositivo externo al pc
+
+-activar el cliente usando npx expo start

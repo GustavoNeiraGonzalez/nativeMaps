@@ -1,17 +1,37 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {Button, View, Text, TextInput, TouchableOpacity } from 'react-native';
 import styles from '../LoginEstilos/Login.module';
 import PostLogin from '../Loginjwt/login'
 import Logout from '../Loginjwt/BorrarLogin'
 import { Alert } from 'react-native';
-
+import getJwt from '../Loginjwt/getJwt'
 export default function Login() {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const [PasswordError, setPasswordError] = useState('');
     const [UsernameError, setUsernameError] = useState('');
-
+    const [isLoggedIn, setIsLoggedIn] = useState(false); // nuevo estado para saber si el usuario está logeado
+    const [user, setUser] = useState(); // dato para usar la funcion de filtración
+    const ejemplo = async ()=>{
+      await getJwt().then(tokenn => { // Usar .then para obtener el token
+        setUser(tokenn);
+        if (tokenn===null){
+            setIsLoggedIn(false)
+        }else{
+            setIsLoggedIn(true)
+        }
+    }).catch(error => {
+          console.log(error)
+      });
+    }
+    useEffect(() => {
+        ejemplo()
+    }, [])
+    
+    useEffect(() => {
+      }, [user]);
+    
     const handlePasswordChange = (text) => {
         setPassword(text);
     
@@ -69,6 +89,7 @@ export default function Login() {
         .then(response => {
             setPassword('')
             setUsername('')
+            setIsLoggedIn(true);
             // Si la respuesta es satisfactoria, muestra una alerta de éxito
             Alert.alert('Éxito', '¡Inicio de sesión exitoso!');
         })
@@ -77,53 +98,59 @@ export default function Login() {
         console.log(error)
         Alert.alert('Error', error.message);
         });
-
-        
     }
 
-  return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Iniciar sesión</Text>
-      <Text style={styles.text}>Usuario:</Text>
-      <TextInput
-        style={styles.input}
-        onChangeText={(e) => handleUsernameChange(e)}
-        value={username}
-        placeholder="Usuario"
-        placeholderTextColor="wheat"
-      />
-        <Text style={{color: 'red'}}>{UsernameError}</Text>
-
-        <Text style={styles.text}>Contraseña:</Text>
-      <TextInput
-        style={styles.input}
-        onChangeText={(e) => handlePasswordChange(e)}
-        value={password}
-        placeholder="Contraseña"
-        secureTextEntry={!showPassword}
-        placeholderTextColor="wheat"
-      />
-        <Text style={{color: 'red'}}>{PasswordError}</Text>
-
-      <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
-        <Text style={{color: 'wheat'}}>{showPassword ? 'Ocultar' : 'Mostrar'} contraseña</Text>
-      </TouchableOpacity>
-      <Button
-              title="Aceptar"
-              onPress={() => {
-                    Login()
-              
-              }}
-            />
-        <Button
-              title="Unlogin"
+    return (
+        <View style={styles.container}>
+          { isLoggedIn===true ? (
+            <>
+              <Text style={styles.title}>Ya has iniciado sesión</Text>
+              <Button
+                title="Cerrar sesión"
                 onPress={() => {
-                    Logout().then(response =>{
-                        Alert.alert('Alerta', response);
-                        })
-                        .catch(error =>(console.log(error)))
+                  Logout().then((response) => {
+                    setIsLoggedIn(false);
+                    Alert.alert('Alerta', response);
+                  })
+                  .catch((error) => {
+                    console.log(error);
+                  })
                 }}
-            />
-    </View>
-  );
+              />
+            </>
+          ) : (
+            <>
+              <Text style={styles.title}>Iniciar sesión</Text>
+              <Text style={styles.text}>Usuario:</Text>
+              <TextInput
+                style={styles.input}
+                onChangeText={(e) => handleUsernameChange(e)}
+                value={username}
+                placeholder="Usuario"
+                placeholderTextColor="wheat"
+              />
+              <Text style={{color: 'red'}}>{UsernameError}</Text>
+              <Text style={styles.text}>Contraseña:</Text>
+              <TextInput
+                style={styles.input}
+                onChangeText={(e) => handlePasswordChange(e)}
+                value={password}
+                placeholder="Contraseña"
+                secureTextEntry={!showPassword}
+                placeholderTextColor="wheat"
+              />
+              <Text style={{color: 'red'}}>{PasswordError}</Text>
+              <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
+                <Text style={{color: 'wheat'}}>{showPassword ? 'Ocultar' : 'Mostrar'} contraseña</Text>
+              </TouchableOpacity>
+              <Button
+                title="Aceptar"
+                onPress={() => {
+                  Login();
+                }}
+              />
+            </>
+          )}
+        </View>
+      );
 }

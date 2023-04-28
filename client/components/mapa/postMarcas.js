@@ -23,9 +23,16 @@ const PostUbicaciones = async (crimen, newDate, latitude, longitude) => {
         return response.data;
     } catch (error) {
         if (error.response) {
-            console.log(error.response.data);
+          if (error.response.data.detail ==="Authentication credentials were not provided."){
+            throw new Error("Se necesita iniciar Sesión para hacer esta acción");
+
+          }else{
+            throw new Error(error.response.data.detail);
+          }
           } else {
-            console.log(error.message);
+            console.log(error.message)
+            console.log("message")
+            throw new Error(error.message);
           }
     }
 }
