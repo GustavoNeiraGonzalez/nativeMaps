@@ -1,7 +1,7 @@
 import axios from "axios";
 import getJwt from "../Loginjwt/getJwt";
 
-axios.defaults.baseURL = 'http://192.168.18.69:8000';
+axios.defaults.baseURL = 'https://zapatobello.pythonanywhere.com'; // URL base del servidor Django
 axios.defaults.headers.common['Access-Control-Allow-Origin'] = '*';
 
 const PostUbicaciones = async (crimen, newDate, latitude, longitude) => {
@@ -22,10 +22,10 @@ const PostUbicaciones = async (crimen, newDate, latitude, longitude) => {
         }, tokenHeader);
         return response.data;
     } catch (error) {
+        console.log(error.response.data)
         if (error.response) {
           if (error.response.data.detail ==="Authentication credentials were not provided."){
             throw new Error("Se necesita iniciar Sesión para hacer esta acción");
-
           }else{
             if (error.response.data.detail) {
               throw new Error(error.response.data.detail);

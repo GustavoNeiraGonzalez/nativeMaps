@@ -1,7 +1,7 @@
 import axios from "axios";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-axios.defaults.baseURL = 'http://192.168.18.69:8000';
+axios.defaults.baseURL = 'https://zapatobello.pythonanywhere.com'; // URL base del servidor Django
 axios.defaults.headers.common['Access-Control-Allow-Origin'] = '*';
 
 const CreateUserr = async (username,email,password) => {
