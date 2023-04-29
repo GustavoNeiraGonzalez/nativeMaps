@@ -1,7 +1,7 @@
 import axios from "axios";
 
 axios.defaults.baseURL = 'https://zapatobello.pythonanywhere.com'; // URL base del servidor Django
-raxios.defaults.headers.common['Access-Control-Allow-Origin'] = '*'; // Establece el encabezado CORS para permitir todas las solicitudes
+axios.defaults.headers.common['Access-Control-Allow-Origin'] = '*'; // Establece el encabezado CORS para permitir todas las solicitudes
 
 const obtenerCrimenes = async () => {
 
