@@ -9,16 +9,10 @@
     },
     "preview": {
       "ios":{
-        "simulator": true,
-        "config":{
-          "googleMapsApiKey":"AIzaSyDbdh8vahK9colAZsOjaVsTOpFjMGEhnHs"
-        }
+        "simulator": true
       },
       "android":{
-        "buildType":"apk",
-        "config":{
-          "apiKey":"AIzaSyDbdh8vahK9colAZsOjaVsTOpFjMGEhnHs"
-        }
+        "buildType":"apk"
       }
     },
     "production": {}

@@ -15,12 +15,19 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "config": {
+        "googleMapsApiKey": "AIzaSyDbdh8vahK9colAZsOjaVsTOpFjMGEhnHs"
+      }
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
+      },"config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyDbdh8vahK9colAZsOjaVsTOpFjMGEhnHs"
+        }
       },
       "package": "com.zapatobello.client"
     },
