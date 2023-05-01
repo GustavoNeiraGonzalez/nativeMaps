@@ -1,7 +1,7 @@
 import axios from "axios";
 import getJwt from "../Loginjwt/getJwt";
 
-axios.defaults.baseURL = 'http://192.168.18.69:8000'; // URL base del servidor Django
+axios.defaults.baseURL = 'https://zapatobello.pythonanywhere.com'; // URL base del servidor Django
 axios.defaults.headers.common['Access-Control-Allow-Origin'] = '*';
 
 const PostUbicaciones = async (crimen,comentario, newDate, latitude, longitude) => {
