@@ -322,11 +322,24 @@ export default function Principal() {
       ) : errorMsg ? (
         <View style={styles.errorContainer}>
           <Text style={styles.errorContainer}>{errorMsg}</Text>
+          <Button title="Intentar nuevamente" onPress={()=>{
+            intervalId = setInterval(() => {
+      tryToGetLocation(setErrorMsg, setLocation);
+    }, intervalTime);  }} />
+              <Text style={styles.loadingContainer}>Si no funciona el boton, dar permisos de ubicación manualmente en configuración/apps</Text>
+
+
         </View>
       ) : (
         /*LO QUE SE MUESTRA MIENTRAS  CARGA MAPA  */
         <View style={styles.loadingContainer}>
           <Text style={styles.loadingContainer}>Cargando ubicación...</Text>
+          <Button title="Intentar nuevamente" onPress={()=>{
+            intervalId = setInterval(() => {
+      tryToGetLocation(setErrorMsg, setLocation);
+    }, intervalTime);  }} />
+
+
         </View>
       )}
       </View>
