@@ -98,18 +98,35 @@ export default function Principal() {
   function handlePress(latitude, longitude)  {
       setUserLocation({latitude,longitude})
   };
-  useEffect(() => {
-    //aqui se obtiene la ubicacion, al hacerlo de manera async
-    //se evita que no carge la ubicacion en la primera ejecución de app
-    const getLocationAsync = async () => {
+
+  let intervalId = null;
+  const intervalTime = 5000; // 5 segundos
+  const maxAttempts = 12; // 12 intentos = 1 minuto
+  
+  const tryToGetLocation = async (setErrorMsg, setLocation) => {
+    let attempts = 0;
+    while (attempts < maxAttempts) {
       try {
         await requestLocationPermissions(setErrorMsg, setLocation);
+        clearInterval(intervalId);
+        break;
       } catch (error) {
         console.log(error);
       }
-    };
+      attempts++;
+    }
+    if (attempts >= maxAttempts) {
+      setErrorMsg('Unable to get location. Please try again later.');
+      clearInterval(intervalId);
+    }
+  };
+  
 
-    getLocationAsync();    
+  useEffect(() => {
+    // Llamamos a la función cada 5 segundos
+    intervalId = setInterval(() => {
+      tryToGetLocation(setErrorMsg, setLocation);
+    }, intervalTime);  
   }, []);
   useEffect(()=>{
     obtenerUbicaciones()
