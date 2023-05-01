@@ -38,6 +38,12 @@ export default function Principal() {
 }
    
 
+   
+const circlezz = [
+  {comentario:"ola"},
+  {comentario:"ktal"}
+];
+
 
 
   const currentYear = new Date().getFullYear();
@@ -307,7 +313,12 @@ export default function Principal() {
               strokeColor="red"
               fillColor="rgba(0,128,0,0.5)" />
           <Marker coordinate={{latitude: circle.latitude, longitude: circle.longitude}}>
-            <Callout>
+            <Callout onPress={() => {
+                const comentarios = circlezz.map((obj, index) => `Comentario ${index + 1}: ${obj.comentario}`).join('\n');
+                Alert.alert('Comentarios', comentarios);
+              
+            }}
+          >
                 <View style={styles.callout}>
                     <Text style={styles.title}>{circle.fusion ? `Cantidad: ${circle.fusion}`  : 'Cantidad: 1'}</Text>
                     <Text style={styles.description}>{circle.fusion ? `${formatDatesAndCrimes(circle.date, circle.crimen)}`
