@@ -21,7 +21,7 @@ export default function Principal() {
   const [useCurrentDate, setUseCurrentDate] = useState(false);
   const [useCurrentLocationBtn, setUseCurrentLocationBtn] = useState(false);
   const [useCurrentLocationBtnvalue, setUseCurrentLocationBtnvalue] = useState(false);
-
+  const [comentarioss, setComentarioss] = useState('');
   const [crimes,setCrimes] = useState([])
   const [selectedCrime, setSelectedCrime] = useState('---');
   const [selectedCrimeBtn, setSelectedCrimeBtn] = useState('---');
@@ -39,10 +39,6 @@ export default function Principal() {
    
 
    
-const circlezz = [
-  {comentario:"ola"},
-  {comentario:"ktal"}
-];
 
 
 
@@ -172,7 +168,7 @@ const circlezz = [
   }
 
   //aqui se calcula las coordenadas en x metros del usuario, las filtra y las junta las cercanas----------
-    const groupCoordinates = (coordinates, maxDistance, userLocation,
+  const groupCoordinates = (coordinates, maxDistance, userLocation,
                             filterDistance, filterDelito, filterDate) => {
       const groups = [];
       for (let i = 0; i < coordinates.length; i++) {
@@ -231,8 +227,8 @@ const circlezz = [
           if (!grouped) groups.push([coordinates[i]]);
         }
       }
-    //aqui se modifica las coordenadas que esten cercas entre si y calcular un punto medio
-    //y reemplazar ambas coordenadas para que solo quede ese punto medio
+      //aqui se modifica las coordenadas que esten cercas entre si y calcular un punto medio
+      //y reemplazar ambas coordenadas para que solo quede ese punto medio
 
       return groups.map(group => {
         const midLatitude = group.reduce((sum, coord) => sum + coord.latitude, 0) / group.length;
@@ -244,9 +240,13 @@ const circlezz = [
        // Agregar arrays de fechas y delitos al nuevo objeto
         result.date = [];
         result.crimen = [];
+        result.comentario = [];
+
         group.forEach(coord => {
             result.date.push(coord.date);
             result.crimen.push(coord.crimen);
+            result.comentario.push(coord.comentario);
+
         });
         return result;
       });
@@ -314,16 +314,16 @@ const circlezz = [
               fillColor="rgba(0,128,0,0.5)" />
           <Marker coordinate={{latitude: circle.latitude, longitude: circle.longitude}}>
             <Callout onPress={() => {
-                const comentarios = circlezz.map((obj, index) => `Comentario ${index + 1}: ${obj.comentario}`).join('\n');
+                const comentarios = circle.comentario.map((comentario, index) => `${index + 1}: "${comentario}"`).join('\n');
                 Alert.alert('Comentarios', comentarios);
-              
             }}
           >
                 <View style={styles.callout}>
                     <Text style={styles.title}>{circle.fusion ? `Cantidad: ${circle.fusion}`  : 'Cantidad: 1'}</Text>
                     <Text style={styles.description}>{circle.fusion ? `${formatDatesAndCrimes(circle.date, circle.crimen)}`
                     :  `fecha: ${circle.date}\n Delitos: ${circle.crimen}`}</Text>
-                  </View>
+                    <Text style={styles.title}>click para ver comentarios</Text>
+                </View>
               </Callout>
           </Marker>
           </React.Fragment>))}
@@ -380,7 +380,7 @@ const circlezz = [
                 <Picker.Item key={crime} label={crime} value={crime} />
               );
             }))}
-        </Picker>
+          </Picker>
 
           <View style={styles.modalSwitch}>
             <Text style={styles.modalText}>Usar Hora actual:</Text>
@@ -393,6 +393,23 @@ const circlezz = [
               }}
             />
           </View>
+
+          <View style={styles.modalSwitch}>
+          <Text style={styles.modalText}>Escribe un comentario:</Text>
+            <TextInput
+              style={styles.selectorTextInput}
+              value={comentarioss}
+              onChangeText={(text) => {
+                // Expresión regular que solo permite acentos, puntos, comas, números y un solo espacio seguido
+                const regex = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ0-9,.\s]*$/;
+                if (regex.test(text)) {
+                  setComentarioss(text);
+                }
+              }}
+              placeholder="Escribe un comentario"
+            />
+          </View>
+
           <View style={styles.modalSwitch}>
              <Text style={styles.modalText}>Usar ubicación actual:</Text>
             <Text style={styles.modalSubText}>(Al no seleccionar se usará la marca creada</Text>
@@ -432,29 +449,33 @@ const circlezz = [
               title="Aceptar"
               onPress={async () => {
                 try {
-                  newDate = `${selectedHourBtn.toString().padStart(2, '0')}:${selectedMinuteBtn.toString().padStart(2, '0')} ${currentDay}/${currentMonthpost} ${currentYear}`
-                  if(useCurrentLocationBtn === true){
-                    await PostUbicaciones(selectedCrimeBtn, newDate,
-                      useCurrentLocationBtnvalue.latitude,useCurrentLocationBtnvalue.longitude
-                    )
-                    Alert.alert("Correcto","ubicación creada exitosamente")
-                    //aqui codigo usando localización actual del usuario
-                  } else {
-                    await PostUbicaciones(selectedCrimeBtn, newDate,
-                      MarkPositionBtn.latitude,MarkPositionBtn.longitude
-                    )
-                    Alert.alert("Correcto","ubicación creada exitosamente")
-                    //aqui usando MarkPositionBtn que es la posicion puesta en el marcador
-                    //verificar si es null para indicar que debe poner un marcador en el mapa
-                  }
-                  setModalVisible(false);
-                  obtenerUbicaciones()
-                    .then(data =>{setUbicacionesDjango(data)})
-                    .catch(error => {if (error.response) {
-                      Alert.alert('error', error.response.data);
+                  if (comentarioss.trim().length < 5 || comentarioss.startsWith(' ')) {
+                    Alert.alert('error', 'Por favor ingrese un comentario de almenos 5 caracteres');
+                  }else{
+                    newDate = `${selectedHourBtn.toString().padStart(2, '0')}:${selectedMinuteBtn.toString().padStart(2, '0')} ${currentDay}/${currentMonthpost} ${currentYear}`
+                    if(useCurrentLocationBtn === true){
+                      await PostUbicaciones(selectedCrimeBtn,comentarioss, newDate,
+                        useCurrentLocationBtnvalue.latitude,useCurrentLocationBtnvalue.longitude
+                      )
+                      Alert.alert("Correcto","ubicación creada exitosamente")
+                      //aqui codigo usando localización actual del usuario
                     } else {
-                      Alert.alert('error', error.message);
-                    }});
+                      await PostUbicaciones(selectedCrimeBtn, comentarioss,newDate,
+                        MarkPositionBtn.latitude,MarkPositionBtn.longitude
+                      )
+                      Alert.alert("Correcto","ubicación creada exitosamente")
+                      //aqui usando MarkPositionBtn que es la posicion puesta en el marcador
+                      //verificar si es null para indicar que debe poner un marcador en el mapa
+                    }
+                    setModalVisible(false);
+                    obtenerUbicaciones()
+                      .then(data =>{setUbicacionesDjango(data)})
+                      .catch(error => {if (error.response) {
+                        Alert.alert('error', error.response.data);
+                      } else {
+                        Alert.alert('error', error.message);
+                      }});
+                  }
                 } catch (error) {
 
                   if (error.response) {

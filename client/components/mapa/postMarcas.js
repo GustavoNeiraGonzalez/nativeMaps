@@ -1,10 +1,10 @@
 import axios from "axios";
 import getJwt from "../Loginjwt/getJwt";
 
-axios.defaults.baseURL = 'https://zapatobello.pythonanywhere.com'; // URL base del servidor Django
+axios.defaults.baseURL = 'http://192.168.18.69:8000'; // URL base del servidor Django
 axios.defaults.headers.common['Access-Control-Allow-Origin'] = '*';
 
-const PostUbicaciones = async (crimen, newDate, latitude, longitude) => {
+const PostUbicaciones = async (crimen,comentario, newDate, latitude, longitude) => {
     let token = '';
     await getJwt().then(tokenn => { // Usar .then para obtener el token
       token = tokenn;
@@ -18,7 +18,8 @@ const PostUbicaciones = async (crimen, newDate, latitude, longitude) => {
         crimen: crimen,
         date: newDate,
         latitude: latitude,
-        longitude: longitude
+        longitude: longitude,
+        comentario:comentario
         }, tokenHeader);
         return response.data;
     } catch (error) {
