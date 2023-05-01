@@ -4,6 +4,7 @@ from Crimenes.models import Crimenes
 
 class Ubicaciones(models.Model):
     UbiId = models.AutoField(primary_key=True)
+    comentario = models.TextField()	
     crimen = models.ForeignKey(Crimenes, on_delete=models.CASCADE)
     date = models.DateTimeField()
     latitude = models.FloatField()

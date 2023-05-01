@@ -16,7 +16,7 @@ class UbicacionesSerializer(serializers.ModelSerializer):
     crimen = serializers.CharField()
     class Meta:
         model = Ubicaciones
-        fields = ['UbiId', 'crimen', 'date', 'latitude', 'longitude', 'user','fecha_creacion']
+        fields = ['UbiId','comentario', 'crimen', 'date', 'latitude', 'longitude', 'user','fecha_creacion']
         read_only_fields = ['user', 'date']  # Agregar user a los campos de solo lectura
 
     def create(self, validated_data):
@@ -45,6 +45,11 @@ class UbicacionesSerializer(serializers.ModelSerializer):
             crime_instance = Crimenes.objects.get(crime=crime_name)
         except Crimenes.DoesNotExist:
             raise serializers.ValidationError("No se encontró un crimen que coincida")
+        # Validar el campo comentario
+
+        comentario = validated_data.get('comentario', '')
+        if len(comentario) < 5:
+            raise serializers.ValidationError("El comentario debe tener al menos 5 caracteres.")
 
         validated_data['crimen'] = crime_instance  # Asignar la instancia de Crimenes recuperada al campo 'crimen'
       
