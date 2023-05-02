@@ -50,14 +50,14 @@ donde 192.168.18.69 representa la ip para compartir desde tu computadora (con em
 - python-dateutil
 
 # imagenes
-![Principal](https://user-images.githubusercontent.com/71986954/235568909-47007c90-e3af-44cf-8f7d-9c6e33dab2f9.jpeg)
-![PrincipalComentario](https://user-images.githubusercontent.com/71986954/235568917-c6223af5-9376-44ec-bc20-7d5c3f6f228e.jpeg)
-![UbicacionCreada](https://user-images.githubusercontent.com/71986954/235569015-f25d1587-f952-4c24-b261-7f1b8e573ca1.jpeg)
+- !<img height="550" alt="Principal" src="https://user-images.githubusercontent.com/71986954/235568909-47007c90-e3af-44cf-8f7d-9c6e33dab2f9.jpeg">
+- !<img height="550" alt="PrincipalComentario" src="https://user-images.githubusercontent.com/71986954/235568917-c6223af5-9376-44ec-bc20-7d5c3f6f228e.jpeg">
+- !<img height="550" alt="UbicacionCreada" src="https://user-images.githubusercontent.com/71986954/235569015-f25d1587-f952-4c24-b261-7f1b8e573ca1.jpeg">
 - Se ven datos a 100 metros respecto al usuario 
-![PrincipalFiltrado](https://user-images.githubusercontent.com/71986954/235569016-9714e0a9-edb8-4321-989c-afaac77964dd.jpeg)
-![crearUsuario](https://user-images.githubusercontent.com/71986954/235569060-c3a97e8f-dbd1-40ac-9a49-5f183653e47e.jpeg)
-![exitoCrearUsuario](https://user-images.githubusercontent.com/71986954/235569079-73ac1e88-6f5e-40ed-9c3d-e1ed65a9a70a.jpeg)
-![login](https://user-images.githubusercontent.com/71986954/235569088-fbc542e5-a37e-41a5-bea3-949f951e06ad.jpeg)
-![yaSesion](https://user-images.githubusercontent.com/71986954/235569105-789094e8-2386-452c-a245-1ae4bf568ff9.jpeg)
+- !<img height="550" alt="PrincipalFiltrado" src="https://user-images.githubusercontent.com/71986954/235569016-9714e0a9-edb8-4321-989c-afaac77964dd.jpeg">
+- !<img height="550" alt="crearUsuario" src="https://user-images.githubusercontent.com/71986954/235569060-c3a97e8f-dbd1-40ac-9a49-5f183653e47e.jpeg">
+- !<img height="550" alt="exitoCrearUsuario" src="https://user-images.githubusercontent.com/71986954/235569079-73ac1e88-6f5e-40ed-9c3d-e1ed65a9a70a.jpeg">
+- !<img height="550" alt="login" src="https://user-images.githubusercontent.com/71986954/235569088-fbc542e5-a37e-41a5-bea3-949f951e06ad.jpeg">
+- !<img height="550" alt="yaSesion" src="https://user-images.githubusercontent.com/71986954/235569105-789094e8-2386-452c-a245-1ae4bf568ff9.jpeg">
 
 
